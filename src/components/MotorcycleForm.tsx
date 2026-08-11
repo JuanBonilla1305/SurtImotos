@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import PhotoInput from "@/components/panel/PhotoInput";
 
 type Client = { id: string; name: string };
@@ -27,6 +30,8 @@ export default function MotorcycleForm({
   defaultValues?: MotorcycleFormValues;
   suppliers: Client[];
 }) {
+  const [uploading, setUploading] = useState(false);
+
   return (
     <form action={action} className="max-w-2xl space-y-4">
       <div className="grid grid-cols-2 gap-4">
@@ -134,11 +139,11 @@ export default function MotorcycleForm({
       </Field>
 
       <Field label="Fotos">
-        <PhotoInput />
+        <PhotoInput onUploadingChange={setUploading} />
       </Field>
 
-      <button type="submit" className="panel-btn-primary">
-        Guardar
+      <button type="submit" disabled={uploading} className="panel-btn-primary disabled:opacity-50">
+        {uploading ? "Subiendo fotos..." : "Guardar"}
       </button>
     </form>
   );

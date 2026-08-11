@@ -1,24 +1,27 @@
-import { createServiceRoleClient, MOTORCYCLE_PHOTOS_BUCKET } from "./server";
+import { createServiceRoleClient } from "./server";
+import { MOTORCYCLE_PHOTOS_BUCKET } from "./bucket";
 
-export async function uploadMotorcyclePhoto(
-  motorcycleId: string,
-  file: File
-): Promise<string> {
+export async function createSignedUploadTargets(fileNames: string[]) {
   const supabase = createServiceRoleClient();
-  const ext = file.name.split(".").pop() ?? "jpg";
-  const path = `${motorcycleId}/${crypto.randomUUID()}.${ext}`;
 
-  const { error } = await supabase.storage
-    .from(MOTORCYCLE_PHOTOS_BUCKET)
-    .upload(path, file, { contentType: file.type });
+  return Promise.all(
+    fileNames.map(async (name) => {
+      const ext = name.split(".").pop() || "jpg";
+      const path = `${crypto.randomUUID()}.${ext}`;
 
-  if (error) throw error;
+      const { data, error } = await supabase.storage
+        .from(MOTORCYCLE_PHOTOS_BUCKET)
+        .createSignedUploadUrl(path);
 
-  const { data } = supabase.storage
-    .from(MOTORCYCLE_PHOTOS_BUCKET)
-    .getPublicUrl(path);
+      if (error) throw error;
 
-  return data.publicUrl;
+      const { data: publicUrlData } = supabase.storage
+        .from(MOTORCYCLE_PHOTOS_BUCKET)
+        .getPublicUrl(path);
+
+      return { path, token: data.token, publicUrl: publicUrlData.publicUrl };
+    })
+  );
 }
 
 export async function deleteMotorcyclePhoto(url: string) {

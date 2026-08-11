@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { uploadMotorcyclePhoto, deleteMotorcyclePhoto } from "@/lib/supabase/photos";
+import { deleteMotorcyclePhoto } from "@/lib/supabase/photos";
 
 const MotorcycleSchema = z.object({
   brand: z.string().min(1, "La marca es obligatoria"),
@@ -54,10 +54,8 @@ export async function createMotorcycle(formData: FormData) {
 
   const motorcycle = await prisma.motorcycle.create({ data });
 
-  const photos = formData.getAll("photos").filter(
-    (item): item is File => item instanceof File && item.size > 0
-  );
-  await uploadPhotos(motorcycle.id, photos);
+  const photoUrls = formData.getAll("photoUrls").map(String).filter(Boolean);
+  await savePhotoUrls(motorcycle.id, photoUrls);
 
   revalidatePath("/panel/motos");
   redirect(`/panel/motos/${motorcycle.id}`);
@@ -69,24 +67,18 @@ export async function updateMotorcycle(id: string, formData: FormData) {
 
   await prisma.motorcycle.update({ where: { id }, data });
 
-  const photos = formData.getAll("photos").filter(
-    (item): item is File => item instanceof File && item.size > 0
-  );
-  await uploadPhotos(id, photos);
+  const photoUrls = formData.getAll("photoUrls").map(String).filter(Boolean);
+  await savePhotoUrls(id, photoUrls);
 
   revalidatePath("/panel/motos");
   revalidatePath(`/panel/motos/${id}`);
   redirect(`/panel/motos/${id}`);
 }
 
-async function uploadPhotos(motorcycleId: string, photos: File[]) {
-  if (photos.length === 0) return;
+async function savePhotoUrls(motorcycleId: string, urls: string[]) {
+  if (urls.length === 0) return;
 
   const existingCount = await prisma.photo.count({ where: { motorcycleId } });
-
-  const urls = await Promise.all(
-    photos.map((file) => uploadMotorcyclePhoto(motorcycleId, file))
-  );
 
   await prisma.photo.createMany({
     data: urls.map((url, index) => ({

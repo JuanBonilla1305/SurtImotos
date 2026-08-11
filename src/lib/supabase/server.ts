@@ -1,5 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
+export { MOTORCYCLE_PHOTOS_BUCKET } from "./bucket";
+
 /**
  * Cliente con la service_role key: solo se usa en el servidor (API routes,
  * server actions). Nunca debe importarse desde código que corra en el navegador.
@@ -11,5 +13,3 @@ export function createServiceRoleClient() {
     { auth: { persistSession: false } }
   );
 }
-
-export const MOTORCYCLE_PHOTOS_BUCKET = "moto-fotos";

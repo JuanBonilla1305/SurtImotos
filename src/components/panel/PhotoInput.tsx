@@ -1,29 +1,97 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { requestPhotoUploadUrls } from "@/lib/actions/photos";
+import { supabaseBrowser } from "@/lib/supabase/browserClient";
+import { MOTORCYCLE_PHOTOS_BUCKET } from "@/lib/supabase/bucket";
 
 const MAX_FILE_MB = 15;
 
-export default function PhotoInput() {
+type UploadedPhoto = {
+  previewUrl: string;
+  publicUrl: string | null;
+  status: "uploading" | "done" | "error";
+  errorMessage?: string;
+};
+
+export default function PhotoInput({
+  onUploadingChange,
+}: {
+  onUploadingChange?: (uploading: boolean) => void;
+}) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [previews, setPreviews] = useState<string[]>([]);
-  const [warning, setWarning] = useState<string | null>(null);
+  const [photos, setPhotos] = useState<UploadedPhoto[]>([]);
 
-  function handleFiles(fileList: FileList | null) {
+  async function handleFiles(fileList: FileList | null) {
     const files = Array.from(fileList ?? []);
+    if (files.length === 0) return;
 
-    const tooLarge = files.filter((f) => f.size > MAX_FILE_MB * 1024 * 1024);
-    setWarning(
-      tooLarge.length > 0
-        ? `${tooLarge.length === 1 ? "Esta foto pesa" : "Estas fotos pesan"} más de ${MAX_FILE_MB}MB y no se podrá${tooLarge.length === 1 ? "" : "n"} subir: ${tooLarge.map((f) => f.name).join(", ")}`
-        : null
-    );
+    const entries: UploadedPhoto[] = files.map((file) => ({
+      previewUrl: URL.createObjectURL(file),
+      publicUrl: null,
+      status: file.size > MAX_FILE_MB * 1024 * 1024 ? "error" : "uploading",
+      errorMessage:
+        file.size > MAX_FILE_MB * 1024 * 1024
+          ? `Pesa más de ${MAX_FILE_MB}MB`
+          : undefined,
+    }));
 
-    setPreviews((prev) => {
-      prev.forEach((url) => URL.revokeObjectURL(url));
-      return files.map((file) => URL.createObjectURL(file));
-    });
+    setPhotos((prev) => [...prev, ...entries]);
+    const startIndex = photos.length;
+
+    const uploadable = files
+      .map((file, i) => ({ file, i }))
+      .filter(({ file }) => file.size <= MAX_FILE_MB * 1024 * 1024);
+
+    if (uploadable.length === 0) return;
+
+    try {
+      const targets = await requestPhotoUploadUrls(uploadable.map(({ file }) => file.name));
+
+      await Promise.all(
+        uploadable.map(async ({ file, i }, targetIndex) => {
+          const target = targets[targetIndex];
+          try {
+            const { error } = await supabaseBrowser.storage
+              .from(MOTORCYCLE_PHOTOS_BUCKET)
+              .uploadToSignedUrl(target.path, target.token, file);
+
+            setPhotos((prev) => {
+              const next = [...prev];
+              next[startIndex + i] = error
+                ? { ...next[startIndex + i], status: "error", errorMessage: "Error al subir" }
+                : { ...next[startIndex + i], status: "done", publicUrl: target.publicUrl };
+              return next;
+            });
+          } catch {
+            setPhotos((prev) => {
+              const next = [...prev];
+              next[startIndex + i] = {
+                ...next[startIndex + i],
+                status: "error",
+                errorMessage: "Error al subir",
+              };
+              return next;
+            });
+          }
+        })
+      );
+    } catch {
+      setPhotos((prev) =>
+        prev.map((p, idx) =>
+          idx >= startIndex && p.status === "uploading"
+            ? { ...p, status: "error", errorMessage: "Error al subir" }
+            : p
+        )
+      );
+    }
   }
+
+  const uploadingCount = photos.filter((p) => p.status === "uploading").length;
+
+  useEffect(() => {
+    onUploadingChange?.(uploadingCount > 0);
+  }, [uploadingCount, onUploadingChange]);
 
   return (
     <div>
@@ -41,25 +109,41 @@ export default function PhotoInput() {
       <input
         ref={inputRef}
         type="file"
-        name="photos"
         accept="image/*"
         multiple
         className="hidden"
-        onChange={(e) => handleFiles(e.target.files)}
+        onChange={(e) => {
+          handleFiles(e.target.files);
+          e.target.value = "";
+        }}
       />
 
-      {warning && <p className="mt-2 text-sm text-red-400">{warning}</p>}
+      {uploadingCount > 0 && (
+        <p className="mt-2 text-sm text-brand-orange">
+          Subiendo {uploadingCount} foto{uploadingCount === 1 ? "" : "s"}...
+        </p>
+      )}
 
-      {previews.length > 0 && (
+      {photos.length > 0 && (
         <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-6">
-          {previews.map((url) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              key={url}
-              src={url}
-              alt=""
-              className="aspect-square rounded-md border border-white/10 object-cover"
-            />
+          {photos.map((photo, i) => (
+            <div key={i} className="relative aspect-square overflow-hidden rounded-md border border-white/10">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={photo.previewUrl} alt="" className="h-full w-full object-cover" />
+              {photo.status === "uploading" && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-xs text-white">
+                  ⏳
+                </div>
+              )}
+              {photo.status === "error" && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/70 p-1 text-center text-[10px] text-red-300">
+                  {photo.errorMessage ?? "Error"}
+                </div>
+              )}
+              {photo.publicUrl && (
+                <input type="hidden" name="photoUrls" value={photo.publicUrl} />
+              )}
+            </div>
           ))}
         </div>
       )}
