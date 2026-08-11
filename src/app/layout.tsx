@@ -21,6 +21,16 @@ const oswald = Oswald({
 export const metadata: Metadata = {
   title: "Compraventa Surtimotos",
   description: "Compra y venta de motos en Ibagué",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "Surtimotos",
+    statusBarStyle: "black-translucent",
+  },
+};
+
+export const viewport = {
+  themeColor: "#0a0a0a",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
