@@ -181,11 +181,16 @@ body {
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   font-weight: 600;
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .panel-btn-primary:hover {
   background-color: var(--brand-orange-light);
+  box-shadow: 0 0 16px 2px rgba(245, 97, 14, 0.55);
+}
+
+.panel-btn-primary:active {
+  transform: scale(0.96);
 }
 
 .panel-btn-secondary {
@@ -195,12 +200,17 @@ body {
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   font-weight: 500;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .panel-btn-secondary:hover {
   background-color: rgba(255, 255, 255, 0.08);
   color: #ffffff;
+  box-shadow: 0 0 14px 2px rgba(255, 255, 255, 0.25);
+}
+
+.panel-btn-secondary:active {
+  transform: scale(0.96);
 }
 
 .panel-btn-danger {
@@ -210,11 +220,28 @@ body {
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   font-weight: 500;
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .panel-btn-danger:hover {
   background-color: rgba(248, 113, 113, 0.1);
+  box-shadow: 0 0 14px 2px rgba(248, 113, 113, 0.45);
+}
+
+.panel-btn-danger:active {
+  transform: scale(0.96);
+}
+
+.brand-glow {
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.brand-glow:hover {
+  box-shadow: 0 0 18px 3px rgba(245, 97, 14, 0.55);
+}
+
+.brand-glow:active {
+  transform: scale(0.96);
 }
 
 .panel-table-wrap {

@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import RunningMoto from "./RunningMoto";
 
 const DISPLAY_SIZE = 240;
+// La moto ya no es cuadrada: el recorte de RunningMoto tiene proporción 470:270.
+const DISPLAY_HEIGHT = DISPLAY_SIZE * (270 / 470);
 
 export default function SplashLoader({ label = "Cargando" }: { label?: string }) {
   const [pct, setPct] = useState(0);
@@ -17,14 +19,14 @@ export default function SplashLoader({ label = "Cargando" }: { label?: string })
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <div className="relative" style={{ width: DISPLAY_SIZE, height: DISPLAY_SIZE }}>
+      <div className="relative" style={{ width: DISPLAY_SIZE, height: DISPLAY_HEIGHT }}>
         {/* estelas de velocidad */}
         <div className="absolute left-0 top-[38%] h-[3px] w-10 rounded-full bg-brand-orange splash-streak" style={{ animationDelay: "0s" }} />
         <div className="absolute left-0 top-[46%] h-[2px] w-14 rounded-full bg-brand-chrome splash-streak" style={{ animationDelay: "-0.18s" }} />
         <div className="absolute left-0 top-[54%] h-[2px] w-8 rounded-full bg-brand-orange splash-streak" style={{ animationDelay: "-0.3s" }} />
         <div className="absolute left-0 top-[62%] h-[2px] w-12 rounded-full bg-brand-chrome-dim splash-streak" style={{ animationDelay: "-0.44s" }} />
 
-        <RunningMoto size={DISPLAY_SIZE} />
+        <RunningMoto width={DISPLAY_SIZE} />
       </div>
 
       {/* carretera */}

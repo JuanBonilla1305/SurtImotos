@@ -31,7 +31,7 @@ export default async function PublicLayout({ children }: { children: React.React
               </span>
               <Link
                 href="/panel"
-                className="rounded-md bg-brand-orange px-3 py-2 text-sm font-semibold text-black transition hover:bg-brand-orange-light sm:px-4"
+                className="rounded-md bg-brand-orange px-3 py-2 text-sm font-semibold text-black transition hover:bg-brand-orange-light sm:px-4 brand-glow"
               >
                 Ir al panel
               </Link>
@@ -39,7 +39,7 @@ export default async function PublicLayout({ children }: { children: React.React
           ) : (
             <Link
               href="/login"
-              className="rounded-md border border-brand-orange px-3 py-2 text-sm font-semibold text-brand-orange transition hover:bg-brand-orange hover:text-black sm:px-4"
+              className="rounded-md border border-brand-orange px-3 py-2 text-sm font-semibold text-brand-orange transition hover:bg-brand-orange hover:text-black sm:px-4 brand-glow"
             >
               Iniciar sesión
             </Link>

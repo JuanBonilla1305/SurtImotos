@@ -5,17 +5,26 @@ const WHEELS = [
   { cx: 404, cy: 225, r: 43 }, // rueda delantera
 ];
 
-export default function RunningMoto({ size = 100 }: { size?: number }) {
-  const scale = size / SOURCE_SIZE;
+// Recorte con relleno alrededor del bbox real del contenido (x:22-481, y:115-360).
+const CROP = { left: 15, top: 100, width: 470, height: 270 };
+
+export default function RunningMoto({ width = 100 }: { width?: number }) {
+  const scale = width / CROP.width;
+  const height = CROP.height * scale;
+  const sourceSize = SOURCE_SIZE * scale;
 
   return (
-    <div className="relative" style={{ width: size, height: size }}>
+    <div style={{ position: "relative", width, height, overflow: "hidden" }}>
       {/* cuerpo de la moto */}
       <div
-        className="absolute inset-0 splash-bob"
+        className="absolute splash-bob"
         style={{
+          width: sourceSize,
+          height: sourceSize,
+          left: -CROP.left * scale,
+          top: -CROP.top * scale,
           backgroundImage: "url(/brand/logo-transparent.png)",
-          backgroundSize: `${size}px ${size}px`,
+          backgroundSize: `${sourceSize}px ${sourceSize}px`,
           backgroundRepeat: "no-repeat",
         }}
       />
@@ -23,8 +32,8 @@ export default function RunningMoto({ size = 100 }: { size?: number }) {
       {/* ruedas girando */}
       {WHEELS.map((w, i) => {
         const wheelSize = 2 * w.r * scale;
-        const left = (w.cx - w.r) * scale;
-        const top = (w.cy - w.r) * scale;
+        const left = (w.cx - w.r - CROP.left) * scale;
+        const top = (w.cy - w.r - CROP.top) * scale;
         return (
           <div
             key={i}
@@ -35,12 +44,12 @@ export default function RunningMoto({ size = 100 }: { size?: number }) {
               className="splash-spin"
               style={{
                 position: "absolute",
-                width: size,
-                height: size,
-                left: -left,
-                top: -top,
+                width: sourceSize,
+                height: sourceSize,
+                left: -(w.cx - w.r) * scale,
+                top: -(w.cy - w.r) * scale,
                 backgroundImage: "url(/brand/wheels-layer.png)",
-                backgroundSize: `${size}px ${size}px`,
+                backgroundSize: `${sourceSize}px ${sourceSize}px`,
                 backgroundRepeat: "no-repeat",
                 transformOrigin: `${w.cx * scale}px ${w.cy * scale}px`,
               }}

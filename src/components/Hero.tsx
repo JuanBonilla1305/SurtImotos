@@ -10,7 +10,7 @@ export default function Hero() {
       <SpeedLines className="absolute right-0 top-1/2 w-2/5 origin-center scale-x-[-1] opacity-50" />
 
       <div className="absolute inset-0 flex items-center justify-center">
-        <RunningMoto size={84} />
+        <RunningMoto width={170} />
       </div>
     </section>
   );

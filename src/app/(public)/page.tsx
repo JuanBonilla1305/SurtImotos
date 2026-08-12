@@ -78,7 +78,7 @@ function HowToGetThere() {
           href={wazeUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-6 inline-flex items-center gap-2 rounded-md bg-brand-orange px-6 py-3 text-sm font-bold uppercase tracking-wide text-black transition hover:bg-brand-orange-light"
+          className="mt-6 inline-flex items-center gap-2 rounded-md bg-brand-orange px-6 py-3 text-sm font-bold uppercase tracking-wide text-black transition hover:bg-brand-orange-light brand-glow"
         >
           🧭 Cómo llegar con Waze
         </a>
