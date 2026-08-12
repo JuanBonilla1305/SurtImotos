@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { requestPhotoUploadUrls } from "@/lib/actions/photos";
 import { supabaseBrowser } from "@/lib/supabase/browserClient";
 import { MOTORCYCLE_PHOTOS_BUCKET } from "@/lib/supabase/bucket";
+import MotoLoader from "@/components/brand/MotoLoader";
 
 const MAX_FILE_MB = 15;
 
@@ -119,9 +120,12 @@ export default function PhotoInput({
       />
 
       {uploadingCount > 0 && (
-        <p className="mt-2 text-sm text-brand-orange">
-          Subiendo {uploadingCount} foto{uploadingCount === 1 ? "" : "s"}...
-        </p>
+        <div className="mt-3 flex items-center gap-3">
+          <MotoLoader size={40} />
+          <p className="text-sm text-brand-orange">
+            Subiendo {uploadingCount} foto{uploadingCount === 1 ? "" : "s"}...
+          </p>
+        </div>
       )}
 
       {photos.length > 0 && (
@@ -131,8 +135,8 @@ export default function PhotoInput({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={photo.previewUrl} alt="" className="h-full w-full object-cover" />
               {photo.status === "uploading" && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-xs text-white">
-                  ⏳
+                <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                  <MotoLoader size={28} />
                 </div>
               )}
               {photo.status === "error" && (

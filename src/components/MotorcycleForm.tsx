@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import PhotoInput from "@/components/panel/PhotoInput";
+import MotoLoader from "@/components/brand/MotoLoader";
 
 type Client = { id: string; name: string };
 
@@ -142,7 +143,12 @@ export default function MotorcycleForm({
         <PhotoInput onUploadingChange={setUploading} />
       </Field>
 
-      <button type="submit" disabled={uploading} className="panel-btn-primary disabled:opacity-50">
+      <button
+        type="submit"
+        disabled={uploading}
+        className="panel-btn-primary inline-flex items-center gap-2 disabled:opacity-50"
+      >
+        {uploading && <MotoLoader size={20} />}
         {uploading ? "Subiendo fotos..." : "Guardar"}
       </button>
     </form>

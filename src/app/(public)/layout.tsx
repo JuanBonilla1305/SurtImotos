@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Logo from "@/components/brand/Logo";
+import SplashOverlay from "@/components/brand/SplashOverlay";
 import { auth } from "@/lib/auth";
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
@@ -7,10 +8,11 @@ export default async function PublicLayout({ children }: { children: React.React
 
   return (
     <div className="flex min-h-screen flex-col bg-brand-black text-white">
+      <SplashOverlay />
       <header className="sticky top-0 z-30 border-b border-white/10 bg-brand-black/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
           <Link href="/" className="flex items-center gap-2 sm:gap-3">
-            <Logo size={40} />
+            <Logo size={48} />
             <div className="leading-none">
               <p className="font-brand text-base font-bold uppercase italic tracking-wide sm:text-lg">
                 Compra<span className="text-brand-orange">venta</span>
