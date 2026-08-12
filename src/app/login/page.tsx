@@ -33,10 +33,10 @@ export default function LoginPage() {
           <Logo size={64} />
           <div>
             <p className="font-brand text-xl font-bold uppercase italic text-white">
-              Compra<span className="text-brand-orange">venta</span> Surti Motos
+              Surti<span className="text-brand-orange">motos</span>
             </p>
             <p className="mt-1 text-xs uppercase tracking-[0.2em] text-brand-chrome-dim">
-              Panel de administración
+              Compraventa · Panel de administración
             </p>
           </div>
         </div>

@@ -15,10 +15,10 @@ export default async function PublicLayout({ children }: { children: React.React
             <Logo size={48} />
             <div className="leading-none">
               <p className="font-brand text-base font-bold uppercase italic tracking-wide sm:text-lg">
-                Compra<span className="text-brand-orange">venta</span>
+                Surti<span className="text-brand-orange">motos</span>
               </p>
               <p className="hidden text-[11px] uppercase tracking-[0.2em] text-brand-chrome-dim sm:block">
-                Surti Motos · Ibagué
+                Compraventa · Ibagué
               </p>
             </div>
           </Link>

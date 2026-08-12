@@ -41,7 +41,7 @@ export default function PanelSidebar({
         <div className="flex items-center gap-2">
           <Logo size={28} />
           <p className="font-brand text-sm font-bold uppercase italic text-white">
-            Compra<span className="text-brand-orange">venta</span>
+            Surti<span className="text-brand-orange">motos</span>
           </p>
         </div>
         <div className="w-7" />
@@ -62,10 +62,10 @@ export default function PanelSidebar({
           <Logo size={36} />
           <div className="leading-none">
             <p className="font-brand text-sm font-bold uppercase italic text-white">
-              Compra<span className="text-brand-orange">venta</span>
+              Surti<span className="text-brand-orange">motos</span>
             </p>
             <p className="text-[10px] uppercase tracking-widest text-brand-chrome-dim">
-              Panel admin
+              Compraventa · Panel admin
             </p>
           </div>
         </div>
