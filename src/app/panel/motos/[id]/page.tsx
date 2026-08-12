@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import MotorcycleForm from "@/components/MotorcycleForm";
 import FormError from "@/components/panel/FormError";
+import DeleteMotorcycleButton from "@/components/panel/DeleteMotorcycleButton";
 import {
   updateMotorcycle,
   removePhoto,
@@ -61,18 +62,10 @@ export default async function MotoDetailPage({
             </form>
           )}
 
-          {!motorcycle.sale && (
-            <form
-              action={async () => {
-                "use server";
-                await deleteMotorcycle(id);
-              }}
-            >
-              <button type="submit" className="panel-btn-danger">
-                Eliminar
-              </button>
-            </form>
-          )}
+          <DeleteMotorcycleButton
+            action={deleteMotorcycle.bind(null, id)}
+            hasSale={!!motorcycle.sale}
+          />
         </div>
       </div>
 

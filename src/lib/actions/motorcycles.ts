@@ -151,8 +151,14 @@ export async function deleteMotorcycle(id: string) {
   await requireSession();
   const photos = await prisma.photo.findMany({ where: { motorcycleId: id } });
 
-  await prisma.motorcycle.delete({ where: { id } });
+  await prisma.$transaction([
+    prisma.sale.deleteMany({ where: { motorcycleId: id } }),
+    prisma.motorcycle.delete({ where: { id } }),
+  ]);
+
   await Promise.all(photos.map((p) => deleteMotorcyclePhoto(p.url)));
 
   revalidatePath("/panel/motos");
+  revalidatePath("/panel/ventas");
+  revalidatePath("/panel");
 }
