@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import MotorcycleForm from "@/components/MotorcycleForm";
+import FormError from "@/components/panel/FormError";
 import {
   updateMotorcycle,
   removePhoto,
@@ -10,10 +11,13 @@ import {
 
 export default async function MotoDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ error?: string }>;
 }) {
   const { id } = await params;
+  const { error } = await searchParams;
 
   const [motorcycle, suppliers] = await Promise.all([
     prisma.motorcycle.findUnique({
@@ -98,9 +102,24 @@ export default async function MotoDetailPage({
       )}
 
       <div className="mt-6">
+        <FormError message={error} />
         <MotorcycleForm
           action={updateMotorcycle.bind(null, id)}
-          defaultValues={motorcycle}
+          defaultValues={{
+            brand: motorcycle.brand,
+            model: motorcycle.model,
+            year: motorcycle.year,
+            displacementCc: motorcycle.displacementCc,
+            plate: motorcycle.plate,
+            chassisNumber: motorcycle.chassisNumber,
+            engineNumber: motorcycle.engineNumber,
+            color: motorcycle.color,
+            mileageKm: motorcycle.mileageKm,
+            purchasePrice: motorcycle.purchasePrice != null ? Number(motorcycle.purchasePrice) : null,
+            salePrice: Number(motorcycle.salePrice),
+            description: motorcycle.description,
+            supplierId: motorcycle.supplierId,
+          }}
           suppliers={suppliers}
         />
       </div>

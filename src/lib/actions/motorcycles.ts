@@ -1,11 +1,35 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/generated/prisma/client";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { deleteMotorcyclePhoto } from "@/lib/supabase/photos";
+
+const FIELD_LABEL: Record<string, string> = {
+  plate: "la placa",
+  chassisNumber: "el chasis",
+  engineNumber: "el número de motor",
+};
+
+function duplicateFieldMessage(error: unknown): string | null {
+  if (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === "P2002"
+  ) {
+    const rawTarget = error.meta?.target;
+    const targetFields = Array.isArray(rawTarget) ? rawTarget : [String(rawTarget ?? "")];
+
+    const matched = Object.keys(FIELD_LABEL).filter((key) =>
+      targetFields.some((t) => String(t).toLowerCase().includes(key.toLowerCase()))
+    );
+    const fields = matched.map((f) => FIELD_LABEL[f]).join(" y ");
+    return `Ya existe otra moto registrada con ${fields || "esos mismos datos"}.`;
+  }
+  return null;
+}
 
 const MotorcycleSchema = z.object({
   brand: z.string().min(1, "La marca es obligatoria"),
@@ -52,7 +76,14 @@ export async function createMotorcycle(formData: FormData) {
   await requireSession();
   const data = parseMotorcycleForm(formData);
 
-  const motorcycle = await prisma.motorcycle.create({ data });
+  let motorcycle;
+  try {
+    motorcycle = await prisma.motorcycle.create({ data });
+  } catch (error) {
+    const message = duplicateFieldMessage(error);
+    if (message) redirect(`/panel/motos/nuevo?error=${encodeURIComponent(message)}`);
+    throw error;
+  }
 
   const photoUrls = formData.getAll("photoUrls").map(String).filter(Boolean);
   await savePhotoUrls(motorcycle.id, photoUrls);
@@ -65,7 +96,13 @@ export async function updateMotorcycle(id: string, formData: FormData) {
   await requireSession();
   const data = parseMotorcycleForm(formData);
 
-  await prisma.motorcycle.update({ where: { id }, data });
+  try {
+    await prisma.motorcycle.update({ where: { id }, data });
+  } catch (error) {
+    const message = duplicateFieldMessage(error);
+    if (message) redirect(`/panel/motos/${id}?error=${encodeURIComponent(message)}`);
+    throw error;
+  }
 
   const photoUrls = formData.getAll("photoUrls").map(String).filter(Boolean);
   await savePhotoUrls(id, photoUrls);

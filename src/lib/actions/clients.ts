@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/generated/prisma/client";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -25,12 +26,28 @@ function parseClientForm(formData: FormData) {
   return ClientSchema.parse(raw);
 }
 
+function isUniqueViolation(error: unknown) {
+  return (
+    error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002"
+  );
+}
+
 export async function createClient(formData: FormData) {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
   const data = parseClientForm(formData);
-  await prisma.client.create({ data });
+
+  try {
+    await prisma.client.create({ data });
+  } catch (error) {
+    if (isUniqueViolation(error)) {
+      redirect(
+        `/panel/clientes/nuevo?error=${encodeURIComponent("Ya existe otro cliente con esa cédula.")}`
+      );
+    }
+    throw error;
+  }
 
   revalidatePath("/panel/clientes");
   redirect("/panel/clientes");
@@ -41,7 +58,17 @@ export async function updateClient(id: string, formData: FormData) {
   if (!session?.user) redirect("/login");
 
   const data = parseClientForm(formData);
-  await prisma.client.update({ where: { id }, data });
+
+  try {
+    await prisma.client.update({ where: { id }, data });
+  } catch (error) {
+    if (isUniqueViolation(error)) {
+      redirect(
+        `/panel/clientes/${id}?error=${encodeURIComponent("Ya existe otro cliente con esa cédula.")}`
+      );
+    }
+    throw error;
+  }
 
   revalidatePath("/panel/clientes");
   redirect("/panel/clientes");
@@ -51,6 +78,17 @@ export async function deleteClient(id: string) {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  await prisma.client.delete({ where: { id } });
+  try {
+    await prisma.client.delete({ where: { id } });
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2003"
+    ) {
+      return;
+    }
+    throw error;
+  }
+
   revalidatePath("/panel/clientes");
 }
