@@ -81,7 +81,7 @@ export default async function MotosPage({
                 <img
                   src={moto.photos[0].url}
                   alt={`${moto.brand} ${moto.model}`}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-contain"
                 />
               ) : (
                 <div className="panel-muted flex h-full items-center justify-center text-sm">

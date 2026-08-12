@@ -33,7 +33,7 @@ export default function MotoCard({ moto, index = 0 }: { moto: Moto; index?: numb
             <img
               src={moto.photoUrl}
               alt={`${moto.brand} ${moto.model}`}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+              className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-110"
             />
           ) : (
             <div className="flex h-full items-center justify-center text-sm text-brand-chrome-dim">

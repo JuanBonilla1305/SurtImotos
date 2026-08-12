@@ -32,7 +32,7 @@ export default function MotoGallery({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-contain"
           />
         </AnimatePresence>
       </div>
@@ -44,12 +44,12 @@ export default function MotoGallery({
               key={url}
               type="button"
               onClick={() => setActive(index)}
-              className={`aspect-square overflow-hidden rounded-md border-2 transition ${
+              className={`aspect-square overflow-hidden rounded-md border-2 bg-brand-charcoal transition ${
                 index === active ? "border-brand-orange" : "border-transparent"
               }`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={url} alt="" className="h-full w-full object-cover" />
+              <img src={url} alt="" className="h-full w-full object-contain" />
             </button>
           ))}
         </div>

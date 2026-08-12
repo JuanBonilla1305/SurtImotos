@@ -74,7 +74,7 @@ export default async function MotoDetailPage({
           {motorcycle.photos.map((photo) => (
             <div key={photo.id} className="group relative aspect-square overflow-hidden rounded-md border border-white/10 bg-black/30">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={photo.url} alt="" className="h-full w-full object-cover" />
+              <img src={photo.url} alt="" className="h-full w-full object-contain" />
               <form
                 action={async () => {
                   "use server";
