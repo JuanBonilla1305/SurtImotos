@@ -13,7 +13,7 @@ export default async function HomePage() {
 
   return (
     <div>
-      <Hero availableCount={motorcycles.length} />
+      <Hero />
 
       <section id="catalogo" className="mx-auto max-w-6xl px-6 py-14">
         <div className="mb-8 flex items-end justify-between">
