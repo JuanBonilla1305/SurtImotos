@@ -1,76 +1,364 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ==========================================================================
+   Compraventa Surtimotos — sistema visual "taller / pista"
+   Asfalto negro, naranja de señalización, cromo y franjas de peligro.
+   ========================================================================== */
 
-  /* Identidad de marca Compraventa Surtimotos */
-  --brand-black: #0a0a0a;
-  --brand-charcoal: #141414;
+:root {
+  --background: #08090b;
+  --foreground: #e9ebed;
+
+  --brand-black: #08090b;
+  --brand-charcoal: #101216;
+  --brand-steel: #191c21;
+  --brand-iron: #23272e;
+
   --brand-orange: #f5610e;
   --brand-orange-light: #ff8a3d;
-  --brand-orange-dark: #c94a08;
-  --brand-chrome: #c9cdd1;
-  --brand-chrome-dim: #8a8f96;
+  --brand-orange-dark: #b8430a;
+  --brand-signal: #ffc400;
+
+  --brand-chrome: #d8dcdf;
+  --brand-chrome-dim: #8b9198;
+
+  --edge: rgba(255, 255, 255, 0.08);
+  --edge-strong: rgba(255, 255, 255, 0.16);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+
+  --font-sans: var(--font-barlow);
   --font-mono: var(--font-geist-mono);
-  --font-brand: var(--font-oswald);
+  --font-brand: var(--font-anton);
+  --font-display: var(--font-anton);
+  --font-condensed: var(--font-barlow-condensed);
 
   --color-brand-black: var(--brand-black);
   --color-brand-charcoal: var(--brand-charcoal);
+  --color-brand-steel: var(--brand-steel);
+  --color-brand-iron: var(--brand-iron);
   --color-brand-orange: var(--brand-orange);
   --color-brand-orange-light: var(--brand-orange-light);
   --color-brand-orange-dark: var(--brand-orange-dark);
+  --color-brand-signal: var(--brand-signal);
   --color-brand-chrome: var(--brand-chrome);
   --color-brand-chrome-dim: var(--brand-chrome-dim);
+}
+
+* {
+  border-color: var(--edge);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-  color-scheme: light;
+  font-family: var(--font-barlow), system-ui, sans-serif;
+  color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--brand-orange);
+  color: #000;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0d0f12;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2f36;
+  border-radius: 99px;
+  border: 2px solid #0d0f12;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand-orange-dark);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand-orange);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Tipografía de marca
+   -------------------------------------------------------------------------- */
+
+.display {
+  font-family: var(--font-anton), sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.88;
+}
+
+.eyebrow {
+  font-family: var(--font-barlow-condensed), sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+  font-size: 0.6875rem;
+}
+
+.text-stroke {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.28);
+}
+
+.text-stroke-orange {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(245, 97, 14, 0.55);
+}
+
+/* --------------------------------------------------------------------------
+   Texturas y superficies
+   -------------------------------------------------------------------------- */
+
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+.grid-floor {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 25%, transparent 78%);
+}
+
+.hazard {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--brand-orange) 0 12px,
+    #0b0c0e 12px 24px
+  );
+}
+
+.hazard-soft {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(245, 97, 14, 0.35) 0 8px,
+    transparent 8px 16px
+  );
+}
+
+.rule-glow {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(245, 97, 14, 0.65) 35%,
+    rgba(245, 97, 14, 0.65) 65%,
+    transparent
+  );
+}
+
+.surface {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 42%),
+    var(--brand-charcoal);
+  border: 1px solid var(--edge);
+}
+
+.glass {
+  background: rgba(10, 11, 13, 0.72);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+.corner-cut {
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+}
+
+.corner-cut-lg {
+  clip-path: polygon(0 0, calc(100% - 34px) 0, 100% 34px, 100% 100%, 0 100%);
+}
+
+/* Marcas de encuadre estilo instrumento */
+.frame-marks {
+  position: relative;
+}
+.frame-marks::before,
+.frame-marks::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-color: var(--brand-orange);
+  opacity: 0.75;
+  pointer-events: none;
+}
+.frame-marks::before {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid;
+  border-left: 2px solid;
+}
+.frame-marks::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+}
+
+/* --------------------------------------------------------------------------
+   Botones
+   -------------------------------------------------------------------------- */
+
+.btn-signal {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  background: var(--brand-orange);
+  color: #08090b;
+  font-family: var(--font-barlow-condensed), sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  padding: 0.9rem 1.6rem;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.12s ease;
+}
+.btn-signal::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -60%;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.55s ease;
+}
+.btn-signal:hover {
+  background: var(--brand-orange-light);
+  box-shadow: 0 0 28px -4px rgba(245, 97, 14, 0.75);
+}
+.btn-signal:hover::after {
+  left: 130%;
+}
+.btn-signal:active {
+  transform: translateY(1px) scale(0.985);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid var(--edge-strong);
+  color: var(--brand-chrome);
+  font-family: var(--font-barlow-condensed), sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  padding: 0.9rem 1.6rem;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease, transform 0.12s ease;
+}
+.btn-ghost:hover {
+  border-color: var(--brand-orange);
+  color: #fff;
+  background: rgba(245, 97, 14, 0.1);
+}
+.btn-ghost:active {
+  transform: translateY(1px) scale(0.985);
+}
+
+/* --------------------------------------------------------------------------
+   Animaciones
+   -------------------------------------------------------------------------- */
+
+@keyframes marquee-kf {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-kf 26s linear infinite;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
 }
 
 @keyframes speed-line-sweep {
-  0% {
-    transform: translateX(-40%);
-    opacity: 0;
-  }
-  15% {
-    opacity: 1;
-  }
-  85% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(40%);
-    opacity: 0;
-  }
+  0% { transform: translateX(-40%); opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateX(40%); opacity: 0; }
 }
-
 .animate-speed-line {
   animation: speed-line-sweep 3.5s ease-in-out infinite;
 }
 
 @keyframes brand-fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-
 .animate-brand-fade-in {
   animation: brand-fade-in 0.5s ease-out both;
+}
+
+@keyframes rise-in-kf {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-rise {
+  animation: rise-in-kf 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes glow-breathe-kf {
+  0%, 100% { opacity: 0.25; transform: scale(0.94); }
+  50% { opacity: 0.6; transform: scale(1.06); }
+}
+.animate-glow-breathe {
+  animation: glow-breathe-kf 5s ease-in-out infinite;
+}
+
+@keyframes scan-kf {
+  0% { transform: translateY(-100%); opacity: 0; }
+  40% { opacity: 1; }
+  100% { transform: translateY(1200%); opacity: 0; }
+}
+.animate-scan {
+  animation: scan-kf 6s linear infinite;
+}
+
+@keyframes blink-kf {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+.animate-blink {
+  animation: blink-kf 1.6s ease-in-out infinite;
+}
+
+@keyframes hazard-slide-kf {
+  from { background-position: 0 0; }
+  to { background-position: 34px 0; }
+}
+.animate-hazard {
+  animation: hazard-slide-kf 0.9s linear infinite;
 }
 
 /* Moto corriendo: cuerpo + ruedas girando (SplashLoader, RunningMoto) */
@@ -121,11 +409,13 @@ body {
   animation: splash-shine-kf 1.3s linear infinite;
 }
 
-/* Panel de administración: tema oscuro de marca */
+/* --------------------------------------------------------------------------
+   Panel de administración
+   -------------------------------------------------------------------------- */
 
 .panel-shell {
-  background-color: #0d0d0d;
-  color: #e5e5e5;
+  background-color: var(--brand-black);
+  color: var(--foreground);
 }
 
 .panel-heading {
@@ -137,27 +427,29 @@ body {
 }
 
 .panel-card {
-  border-radius: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background-color: #171717;
+  border: 1px solid var(--edge);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 45%),
+    var(--brand-charcoal);
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .panel-input,
 .panel-select,
 .panel-textarea {
   width: 100%;
-  border-radius: 0.375rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background-color: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--edge-strong);
+  background-color: rgba(0, 0, 0, 0.45);
   color: #ffffff;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.9rem;
   color-scheme: dark;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 
 .panel-input::placeholder,
 .panel-textarea::placeholder {
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.3);
 }
 
 .panel-input:focus,
@@ -165,28 +457,39 @@ body {
 .panel-textarea:focus {
   outline: none;
   border-color: var(--brand-orange);
-  box-shadow: 0 0 0 1px var(--brand-orange);
+  background-color: rgba(245, 97, 14, 0.06);
+  box-shadow: 0 0 0 3px rgba(245, 97, 14, 0.18);
 }
 
 .panel-label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--brand-chrome);
+  font-family: var(--font-barlow-condensed), sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--brand-chrome-dim);
 }
 
 .panel-btn-primary {
-  border-radius: 0.375rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
   background-color: var(--brand-orange);
-  color: #000000;
-  padding: 0.5rem 1rem;
+  color: #08090b;
+  padding: 0.6rem 1.1rem;
+  font-family: var(--font-barlow-condensed), sans-serif;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
   transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .panel-btn-primary:hover {
   background-color: var(--brand-orange-light);
-  box-shadow: 0 0 16px 2px rgba(245, 97, 14, 0.55);
+  box-shadow: 0 0 22px -2px rgba(245, 97, 14, 0.65);
 }
 
 .panel-btn-primary:active {
@@ -194,19 +497,25 @@ body {
 }
 
 .panel-btn-secondary {
-  border-radius: 0.375rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border: 1px solid var(--edge-strong);
   color: var(--brand-chrome);
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.1rem;
+  font-family: var(--font-barlow-condensed), sans-serif;
   font-size: 0.875rem;
-  font-weight: 500;
-  transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
 
 .panel-btn-secondary:hover {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: var(--edge-strong);
   color: #ffffff;
-  box-shadow: 0 0 14px 2px rgba(255, 255, 255, 0.25);
 }
 
 .panel-btn-secondary:active {
@@ -214,18 +523,24 @@ body {
 }
 
 .panel-btn-danger {
-  border-radius: 0.375rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
   border: 1px solid rgba(248, 113, 113, 0.35);
   color: #f87171;
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.1rem;
+  font-family: var(--font-barlow-condensed), sans-serif;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
   transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .panel-btn-danger:hover {
-  background-color: rgba(248, 113, 113, 0.1);
-  box-shadow: 0 0 14px 2px rgba(248, 113, 113, 0.45);
+  background-color: rgba(248, 113, 113, 0.12);
+  box-shadow: 0 0 16px -2px rgba(248, 113, 113, 0.5);
 }
 
 .panel-btn-danger:active {
@@ -237,7 +552,7 @@ body {
 }
 
 .brand-glow:hover {
-  box-shadow: 0 0 18px 3px rgba(245, 97, 14, 0.55);
+  box-shadow: 0 0 18px 3px rgba(245, 97, 14, 0.5);
 }
 
 .brand-glow:active {
@@ -245,32 +560,57 @@ body {
 }
 
 .panel-table-wrap {
-  overflow: hidden;
-  border-radius: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background-color: #171717;
+  overflow-x: auto;
+  border: 1px solid var(--edge);
+  background-color: var(--brand-charcoal);
 }
 
 .panel-table {
   width: 100%;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
+  border-collapse: collapse;
 }
 
 .panel-table thead {
-  background-color: rgba(255, 255, 255, 0.04);
+  background-color: rgba(255, 255, 255, 0.03);
   text-align: left;
+}
+
+.panel-table th {
+  font-family: var(--font-barlow-condensed), sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.7rem;
   color: var(--brand-chrome-dim);
+  white-space: nowrap;
 }
 
 .panel-table th,
 .panel-table td {
-  padding: 0.75rem 1rem;
+  padding: 0.8rem 1rem;
 }
 
-.panel-table tr {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+.panel-table tbody tr {
+  border-top: 1px solid var(--edge);
+  transition: background-color 0.15s ease;
 }
 
-.panel-table thead tr {
-  border-top: none;
+.panel-table tbody tr:hover {
+  background-color: rgba(245, 97, 14, 0.05);
+}
+
+/* --------------------------------------------------------------------------
+   Accesibilidad: respetar preferencia de movimiento reducido
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

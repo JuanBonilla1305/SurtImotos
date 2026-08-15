@@ -17,7 +17,7 @@ export default async function NuevaMotoPage({
 
   return (
     <div>
-      <h1 className="panel-heading font-brand text-2xl font-bold uppercase italic">
+      <h1 className="display text-3xl text-white sm:text-4xl">
         Nueva moto
       </h1>
       <div className="mt-6">

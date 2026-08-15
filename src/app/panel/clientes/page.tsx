@@ -25,7 +25,7 @@ export default async function ClientesPage({
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="panel-heading font-brand text-2xl font-bold uppercase italic">
+        <h1 className="display text-3xl text-white sm:text-4xl">
           Clientes
         </h1>
         <Link href="/panel/clientes/nuevo" className="panel-btn-primary">
