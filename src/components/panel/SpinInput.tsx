@@ -26,6 +26,7 @@ export default function SpinInput({
   const [urls, setUrls] = useState<string[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [message, setMessage] = useState<string | null>(null);
+  const [seconds, setSeconds] = useState(0);
 
   const working = phase === "extrayendo" || phase === "subiendo";
 
@@ -37,6 +38,14 @@ export default function SpinInput({
   useEffect(() => {
     return () => previews.forEach((url) => URL.revokeObjectURL(url));
   }, [previews]);
+
+  // Cronómetro visible: sin él no hay forma de saber si va lento o se atascó.
+  useEffect(() => {
+    if (!working) return;
+    const started = Date.now();
+    const timer = setInterval(() => setSeconds(Math.round((Date.now() - started) / 1000)), 500);
+    return () => clearInterval(timer);
+  }, [working]);
 
   async function handleVideo(file: File | undefined) {
     if (!file) return;
@@ -132,6 +141,7 @@ export default function SpinInput({
           <div className="flex-1">
             <p className="text-sm text-brand-orange">
               {phase === "extrayendo" ? "Extrayendo cuadros" : "Subiendo cuadros"} · {pct}%
+              <span className="panel-muted ml-2 tabular-nums">{seconds}s</span>
             </p>
             <div className="mt-1.5 h-[5px] overflow-hidden bg-white/10">
               <div
@@ -151,7 +161,7 @@ export default function SpinInput({
 
       {phase === "listo" && (
         <p className="mt-3 text-sm text-green-400">
-          {urls.length} cuadros listos. Guarda la moto para publicar el giro.
+          {urls.length} cuadros listos en {seconds}s. Guarda la moto para publicar el giro.
         </p>
       )}
 

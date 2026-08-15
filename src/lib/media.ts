@@ -136,7 +136,10 @@ async function seekTo(video: HTMLVideoElement, time: number): Promise<void> {
 
   if (typeof withCallback.requestVideoFrameCallback === "function") {
     await new Promise<void>((resolve) => {
-      const timer = setTimeout(resolve, 500);
+      // Tope corto: tras `seeked` el cuadro casi siempre ya está listo, y si la
+      // pestaña no está componiendo la llamada no se dispara nunca. Esperar de
+      // más aquí multiplica el tiempo total por cada uno de los 32 cuadros.
+      const timer = setTimeout(resolve, 120);
       withCallback.requestVideoFrameCallback!(() => {
         clearTimeout(timer);
         resolve();
