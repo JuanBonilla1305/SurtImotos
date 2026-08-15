@@ -1,6 +1,9 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import MotoGallery from "@/components/MotoGallery";
+import MotoCard from "@/components/MotoCard";
+import Reveal from "@/components/public/Reveal";
 
 export const revalidate = 0;
 
@@ -18,57 +21,153 @@ export default async function CatalogoDetailPage({
 
   if (!moto || moto.status !== "DISPONIBLE") notFound();
 
+  const related = await prisma.motorcycle.findMany({
+    where: { status: "DISPONIBLE", id: { not: moto.id } },
+    orderBy: { createdAt: "desc" },
+    take: 3,
+    include: { photos: { orderBy: { order: "asc" }, take: 1 } },
+  });
+
   const whatsappNumber = process.env.NEXT_PUBLIC_CONTACT_WHATSAPP;
   const message = encodeURIComponent(
     `Hola, estoy interesado en la ${moto.brand} ${moto.model} ${moto.year} (placa ${moto.plate}) que vi en el catálogo.`
   );
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-12">
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
-        <MotoGallery
-          photos={moto.photos.map((p) => p.url)}
-          title={`${moto.brand} ${moto.model}`}
-        />
+    <div className="relative overflow-hidden pt-28">
+      <div className="grid-floor pointer-events-none absolute inset-x-0 top-0 h-[600px] opacity-60" />
+      <div className="pointer-events-none absolute -left-32 top-40 h-[420px] w-[420px] rounded-full bg-brand-orange/12 blur-[130px]" />
 
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-brand-orange">
-            {moto.year} · {moto.displacementCc}cc
-          </p>
-          <h1 className="mt-2 font-brand text-4xl font-bold uppercase italic text-white">
-            {moto.brand} {moto.model}
-          </h1>
-          <p className="mt-4 text-3xl font-bold text-brand-orange">
-            ${Number(moto.salePrice).toLocaleString("es-CO")}
-          </p>
+      <div className="relative mx-auto max-w-7xl px-5 pb-20 sm:px-8">
+        <Link
+          href="/#catalogo"
+          className="group inline-flex items-center gap-2 font-condensed text-xs font-bold uppercase tracking-[0.2em] text-brand-chrome-dim transition-colors hover:text-brand-orange"
+        >
+          <span className="inline-block transition-transform duration-300 group-hover:-translate-x-1">
+            ←
+          </span>
+          Volver al catálogo
+        </Link>
 
-          <dl className="mt-8 grid grid-cols-2 gap-y-4 border-t border-white/10 pt-6 text-sm">
-            <Spec label="Color" value={moto.color ?? "—"} />
-            <Spec
-              label="Kilometraje"
-              value={
-                moto.mileageKm != null ? `${moto.mileageKm.toLocaleString("es-CO")} km` : "—"
-              }
-            />
-            <Spec label="Placa" value={moto.plate} />
-            <Spec label="Cilindraje" value={`${moto.displacementCc}cc`} />
-          </dl>
+        <div className="mt-8 grid gap-10 lg:grid-cols-12 lg:gap-14">
+          <div className="lg:col-span-7">
+            <Reveal>
+              <MotoGallery
+                photos={moto.photos.map((p) => p.url)}
+                title={`${moto.brand} ${moto.model}`}
+              />
+            </Reveal>
+          </div>
 
-          {moto.description && (
-            <p className="mt-6 text-brand-chrome">{moto.description}</p>
-          )}
+          <div className="lg:col-span-5">
+            <Reveal delay={0.1}>
+              <div className="flex items-center gap-3">
+                <span className="flex items-center gap-1.5 bg-green-500/15 px-2.5 py-1 font-condensed text-[10px] font-bold uppercase tracking-[0.2em] text-green-400">
+                  <span className="h-1.5 w-1.5 rounded-full bg-green-400" />
+                  Disponible
+                </span>
+                <p className="eyebrow text-brand-chrome-dim">
+                  {moto.year} · {moto.displacementCc} cc
+                </p>
+              </div>
 
-          {whatsappNumber && (
-            <a
-              href={`https://wa.me/${whatsappNumber}?text=${message}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-8 inline-flex items-center rounded-md bg-brand-orange px-6 py-3 text-sm font-bold uppercase tracking-wide text-black transition hover:bg-brand-orange-light"
-            >
-              Contactar por WhatsApp
-            </a>
-          )}
+              <h1 className="display mt-4 text-5xl text-white sm:text-6xl">
+                {moto.brand}
+                <br />
+                <span className="text-brand-orange">{moto.model}</span>
+              </h1>
+
+              <div className="mt-7 flex items-end justify-between border border-white/10 bg-brand-charcoal p-5 corner-cut">
+                <div>
+                  <p className="eyebrow text-brand-chrome-dim">Precio de venta</p>
+                  <p className="display mt-1 text-4xl text-white">
+                    ${Number(moto.salePrice).toLocaleString("es-CO")}
+                  </p>
+                </div>
+                <span className="font-mono text-xs text-brand-chrome-dim">COP</span>
+              </div>
+
+              <dl className="mt-6 grid grid-cols-2 gap-px overflow-hidden border border-white/10 bg-white/10">
+                <Spec label="Cilindraje" value={`${moto.displacementCc} cc`} />
+                <Spec label="Modelo" value={String(moto.year)} />
+                <Spec
+                  label="Kilometraje"
+                  value={
+                    moto.mileageKm != null
+                      ? `${moto.mileageKm.toLocaleString("es-CO")} km`
+                      : "—"
+                  }
+                />
+                <Spec label="Color" value={moto.color ?? "—"} />
+                <Spec label="Placa" value={moto.plate} />
+                <Spec label="Marca" value={moto.brand} />
+              </dl>
+
+              {moto.description && (
+                <div className="mt-6 border-l-2 border-brand-orange pl-4">
+                  <p className="eyebrow text-brand-chrome-dim">Detalles</p>
+                  <p className="mt-2 text-sm leading-relaxed text-brand-chrome">
+                    {moto.description}
+                  </p>
+                </div>
+              )}
+
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                {whatsappNumber && (
+                  <a
+                    href={`https://wa.me/${whatsappNumber}?text=${message}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-signal flex-1"
+                  >
+                    Preguntar por esta moto
+                  </a>
+                )}
+                <Link href="/#ubicacion" className="btn-ghost">
+                  Verla en el local
+                </Link>
+              </div>
+
+              <p className="mt-4 text-xs leading-relaxed text-brand-chrome-dim">
+                Papeles verificados y traspaso incluido. Recibimos tu moto usada en parte de
+                pago.
+              </p>
+            </Reveal>
+          </div>
         </div>
+
+        {related.length > 0 && (
+          <section className="mt-24">
+            <Reveal className="mb-8 flex items-end justify-between gap-4">
+              <h2 className="display text-3xl text-white sm:text-4xl">También te puede servir</h2>
+              <Link
+                href="/#catalogo"
+                className="hidden font-condensed text-xs font-bold uppercase tracking-[0.2em] text-brand-chrome-dim transition-colors hover:text-brand-orange sm:block"
+              >
+                Ver todas →
+              </Link>
+            </Reveal>
+
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {related.map((item, index) => (
+                <MotoCard
+                  key={item.id}
+                  index={index}
+                  moto={{
+                    id: item.id,
+                    brand: item.brand,
+                    model: item.model,
+                    year: item.year,
+                    displacementCc: item.displacementCc,
+                    mileageKm: item.mileageKm,
+                    salePrice: Number(item.salePrice),
+                    photoUrl: item.photos[0]?.url,
+                  }}
+                />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );
@@ -76,9 +175,11 @@ export default async function CatalogoDetailPage({
 
 function Spec({ label, value }: { label: string; value: string }) {
   return (
-    <div>
-      <dt className="text-brand-chrome-dim">{label}</dt>
-      <dd className="font-medium text-white">{value}</dd>
+    <div className="bg-brand-charcoal px-4 py-3.5">
+      <dt className="eyebrow text-brand-chrome-dim">{label}</dt>
+      <dd className="mt-1.5 font-condensed text-base font-semibold uppercase tracking-wide text-white">
+        {value}
+      </dd>
     </div>
   );
 }

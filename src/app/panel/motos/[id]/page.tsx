@@ -33,7 +33,7 @@ export default async function MotoDetailPage({
   return (
     <div className="max-w-2xl">
       <div className="flex items-center justify-between">
-        <h1 className="panel-heading font-brand text-2xl font-bold uppercase italic">
+        <h1 className="display text-3xl text-white sm:text-4xl">
           {motorcycle.brand} {motorcycle.model}
         </h1>
 

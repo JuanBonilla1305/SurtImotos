@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { signIn } from "@/lib/auth";
 import { AuthError } from "next-auth";
 import Logo from "@/components/brand/Logo";
@@ -21,59 +22,72 @@ async function login(formData: FormData) {
 
 export default function LoginPage() {
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-brand-black px-4">
-      <SpeedLines className="absolute right-0 top-1/4 w-1/2 opacity-40" />
-      <SpeedLines className="absolute bottom-1/4 left-0 w-1/3 opacity-30" />
+    <div className="grain relative flex min-h-screen items-center justify-center overflow-hidden bg-brand-black px-4 py-12">
+      <div className="grid-floor pointer-events-none absolute inset-0" />
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-orange/15 blur-[130px] animate-glow-breathe" />
 
-      <form
-        action={login}
-        className="animate-brand-fade-in relative w-full max-w-sm space-y-5 rounded-xl border border-white/10 bg-brand-charcoal p-8 shadow-[0_0_60px_-15px_rgba(245,97,14,0.35)]"
-      >
-        <div className="flex flex-col items-center gap-3 text-center">
-          <Logo size={64} />
-          <div>
-            <p className="font-brand text-xl font-bold uppercase italic text-white">
-              Surti<span className="text-brand-orange">motos</span>
-            </p>
-            <p className="mt-1 text-xs uppercase tracking-[0.2em] text-brand-chrome-dim">
-              Compraventa · Panel de administración
-            </p>
-          </div>
-        </div>
+      <SpeedLines className="pointer-events-none absolute right-0 top-1/4 w-1/2 opacity-30" />
+      <SpeedLines className="pointer-events-none absolute bottom-1/4 left-0 w-1/3 origin-center scale-x-[-1] opacity-25" />
 
-        <div className="space-y-1">
-          <label htmlFor="email" className="text-sm font-medium text-brand-chrome">
-            Correo
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            required
-            className="w-full rounded-md border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange"
-          />
-        </div>
+      <div className="animate-brand-fade-in relative w-full max-w-sm">
+        <div className="hazard h-[3px] opacity-90" />
 
-        <div className="space-y-1">
-          <label htmlFor="password" className="text-sm font-medium text-brand-chrome">
-            Contraseña
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            className="w-full rounded-md border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="w-full rounded-md bg-brand-orange px-3 py-2.5 text-sm font-bold uppercase tracking-wide text-black transition hover:bg-brand-orange-light brand-glow"
+        <form
+          action={login}
+          className="frame-marks space-y-6 border border-white/10 bg-brand-charcoal/90 p-8 backdrop-blur"
         >
-          Entrar
-        </button>
-      </form>
+          <div className="flex flex-col items-center gap-4 text-center">
+            <Logo size={64} />
+            <div>
+              <p className="display text-2xl text-white">
+                Surti<span className="text-brand-orange">motos</span>
+              </p>
+              <p className="eyebrow mt-2 text-brand-chrome-dim">Panel de administración</p>
+            </div>
+          </div>
+
+          <div className="rule-glow" />
+
+          <div className="space-y-1.5">
+            <label htmlFor="email" className="panel-label">
+              Correo
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              className="panel-input"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label htmlFor="password" className="panel-label">
+              Contraseña
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              className="panel-input"
+            />
+          </div>
+
+          <button type="submit" className="btn-signal w-full">
+            Entrar
+          </button>
+        </form>
+
+        <Link
+          href="/"
+          className="mt-6 block text-center font-condensed text-xs font-semibold uppercase tracking-[0.2em] text-brand-chrome-dim transition-colors hover:text-brand-orange"
+        >
+          ← Volver al sitio
+        </Link>
+      </div>
     </div>
   );
 }
