@@ -9,7 +9,8 @@ export default async function HomePage() {
   const motorcycles = await prisma.motorcycle.findMany({
     where: { status: "DISPONIBLE" },
     orderBy: { createdAt: "desc" },
-    include: { photos: { orderBy: { order: "asc" }, take: 1 } },
+    // Prefiere una foto normal; si la moto solo tiene giro, usa su primer cuadro.
+    include: { photos: { orderBy: [{ isSpin: "asc" }, { order: "asc" }], take: 1 } },
   });
 
   const motos = motorcycles.map((moto) => ({

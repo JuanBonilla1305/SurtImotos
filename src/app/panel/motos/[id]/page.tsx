@@ -6,6 +6,7 @@ import DeleteMotorcycleButton from "@/components/panel/DeleteMotorcycleButton";
 import {
   updateMotorcycle,
   removePhoto,
+  removeSpin,
   setMotorcycleStatus,
   deleteMotorcycle,
 } from "@/lib/actions/motorcycles";
@@ -26,6 +27,9 @@ export default async function MotoDetailPage({
   });
 
   if (!motorcycle) notFound();
+
+  const galleryPhotos = motorcycle.photos.filter((p) => !p.isSpin);
+  const spinFrames = motorcycle.photos.filter((p) => p.isSpin);
 
   return (
     <div className="max-w-3xl">
@@ -63,9 +67,41 @@ export default async function MotoDetailPage({
         </div>
       </div>
 
-      {motorcycle.photos.length > 0 && (
+      {spinFrames.length > 0 && (
+        <div className="panel-card mt-4 flex flex-wrap items-center justify-between gap-4 p-4">
+          <div className="flex items-center gap-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={spinFrames[0].url}
+              alt=""
+              className="h-14 w-20 shrink-0 border border-white/10 bg-black/30 object-contain"
+            />
+            <div>
+              <p className="font-condensed text-sm font-bold uppercase tracking-[0.16em] text-white">
+                Vista 360 activa
+              </p>
+              <p className="panel-muted mt-0.5 text-xs">
+                {spinFrames.length} cuadros · se muestra antes de las fotos en la ficha
+              </p>
+            </div>
+          </div>
+
+          <form
+            action={async () => {
+              "use server";
+              await removeSpin(id);
+            }}
+          >
+            <button type="submit" className="panel-btn-danger">
+              Quitar giro
+            </button>
+          </form>
+        </div>
+      )}
+
+      {galleryPhotos.length > 0 && (
         <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
-          {motorcycle.photos.map((photo) => (
+          {galleryPhotos.map((photo) => (
             <div
               key={photo.id}
               className="group relative aspect-square overflow-hidden border border-white/10 bg-black/30"
@@ -105,6 +141,7 @@ export default async function MotoDetailPage({
             mileageKm: motorcycle.mileageKm,
             description: motorcycle.description,
           }}
+          spinFrameCount={spinFrames.length}
         />
       </div>
     </div>

@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import PhotoInput from "@/components/panel/PhotoInput";
+import SpinInput from "@/components/panel/SpinInput";
+import Combobox from "@/components/panel/Combobox";
 import MotoLoader from "@/components/brand/MotoLoader";
+import { MOTO_BRANDS, modelsForBrand } from "@/lib/moto-catalog";
 
 type MotorcycleFormValues = {
   brand?: string;
@@ -18,20 +21,52 @@ type MotorcycleFormValues = {
 export default function MotorcycleForm({
   action,
   defaultValues,
+  spinFrameCount = 0,
 }: {
   action: (formData: FormData) => void | Promise<void>;
   defaultValues?: MotorcycleFormValues;
+  spinFrameCount?: number;
 }) {
-  const [uploading, setUploading] = useState(false);
+  const [uploadingPhotos, setUploadingPhotos] = useState(false);
+  const [buildingSpin, setBuildingSpin] = useState(false);
+  const uploading = uploadingPhotos || buildingSpin;
+
+  const [brand, setBrand] = useState(defaultValues?.brand ?? "");
+  const [model, setModel] = useState(defaultValues?.model ?? "");
+
+  const modelOptions = useMemo(() => modelsForBrand(brand), [brand]);
 
   return (
     <form action={action} className="max-w-3xl space-y-5">
       <Section title="Identificación" step="01">
         <Field label="Marca *">
-          <input name="brand" required defaultValue={defaultValues?.brand} className="panel-input" />
+          <Combobox
+            name="brand"
+            required
+            options={MOTO_BRANDS}
+            value={brand}
+            onValueChange={(next) => {
+              setBrand(next);
+              // Cambiar de marca deja una línea que ya no corresponde.
+              if (model && !modelsForBrand(next).includes(model)) setModel("");
+            }}
+            placeholder="Escribe y elige…"
+          />
         </Field>
         <Field label="Línea / Modelo *">
-          <input name="model" required defaultValue={defaultValues?.model} className="panel-input" />
+          <Combobox
+            name="model"
+            required
+            options={modelOptions}
+            value={model}
+            onValueChange={setModel}
+            placeholder="Escribe y elige…"
+            emptyHint={
+              brand && modelOptions.length === 0
+                ? "No tenemos líneas guardadas de esa marca: escríbela a mano."
+                : undefined
+            }
+          />
         </Field>
         <Field label="Placa *">
           <input name="plate" required defaultValue={defaultValues?.plate} className="panel-input" />
@@ -81,7 +116,13 @@ export default function MotorcycleForm({
         </Field>
 
         <Field label="Fotos">
-          <PhotoInput onUploadingChange={setUploading} />
+          <PhotoInput onUploadingChange={setUploadingPhotos} />
+        </Field>
+      </Section>
+
+      <Section title="Vista 360" step="04" full>
+        <Field label="Video girando alrededor de la moto">
+          <SpinInput existingCount={spinFrameCount} onWorkingChange={setBuildingSpin} />
         </Field>
       </Section>
 
@@ -91,7 +132,7 @@ export default function MotorcycleForm({
         className="panel-btn-primary disabled:opacity-50"
       >
         {uploading && <MotoLoader size={20} />}
-        {uploading ? "Subiendo fotos..." : "Guardar"}
+        {uploading ? "Procesando archivos..." : "Guardar"}
       </button>
     </form>
   );

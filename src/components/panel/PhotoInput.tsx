@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { requestPhotoUploadUrls } from "@/lib/actions/photos";
 import { supabaseBrowser } from "@/lib/supabase/browserClient";
 import { MOTORCYCLE_PHOTOS_BUCKET } from "@/lib/supabase/bucket";
+import { compressImage } from "@/lib/media";
 import MotoLoader from "@/components/brand/MotoLoader";
 
 const MAX_FILE_MB = 15;
@@ -53,9 +54,13 @@ export default function PhotoInput({
         uploadable.map(async ({ file, i }, targetIndex) => {
           const target = targets[targetIndex];
           try {
+            // Se reescala antes de subir: una foto de celular pesa varios MB y
+            // la ficha tiene que abrir rápido con datos móviles.
+            const optimized = await compressImage(file);
+
             const { error } = await supabaseBrowser.storage
               .from(MOTORCYCLE_PHOTOS_BUCKET)
-              .uploadToSignedUrl(target.path, target.token, file);
+              .uploadToSignedUrl(target.path, target.token, optimized);
 
             setPhotos((prev) => {
               const next = [...prev];

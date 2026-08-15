@@ -53,6 +53,10 @@ model Photo {
   id           String     @id @default(cuid())
   url          String
   order        Int        @default(0)
+  // true = cuadro de la secuencia de giro 360; false = foto normal de galería.
+  isSpin       Boolean    @default(false)
   motorcycleId String
   motorcycle   Motorcycle @relation(fields: [motorcycleId], references: [id], onDelete: Cascade)
+
+  @@index([motorcycleId, isSpin, order])
 }

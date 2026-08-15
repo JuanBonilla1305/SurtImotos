@@ -24,7 +24,7 @@ export default async function DashboardPage() {
       prisma.motorcycle.findMany({
         orderBy: { createdAt: "desc" },
         take: 6,
-        include: { photos: { orderBy: { order: "asc" }, take: 1 } },
+        include: { photos: { orderBy: [{ isSpin: "asc" }, { order: "asc" }], take: 1 } },
       }),
     ]);
 

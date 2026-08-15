@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import MotoGallery from "@/components/MotoGallery";
+import SpinViewer from "@/components/SpinViewer";
 import MotoCard from "@/components/MotoCard";
 import Reveal from "@/components/public/Reveal";
 
@@ -21,11 +22,14 @@ export default async function CatalogoDetailPage({
 
   if (!moto || moto.status !== "DISPONIBLE") notFound();
 
+  const spinFrames = moto.photos.filter((p) => p.isSpin).map((p) => p.url);
+  const galleryPhotos = moto.photos.filter((p) => !p.isSpin).map((p) => p.url);
+
   const related = await prisma.motorcycle.findMany({
     where: { status: "DISPONIBLE", id: { not: moto.id } },
     orderBy: { createdAt: "desc" },
     take: 3,
-    include: { photos: { orderBy: { order: "asc" }, take: 1 } },
+    include: { photos: { where: { isSpin: false }, orderBy: { order: "asc" }, take: 1 } },
   });
 
   const whatsappNumber = process.env.NEXT_PUBLIC_CONTACT_WHATSAPP;
@@ -52,10 +56,29 @@ export default async function CatalogoDetailPage({
         <div className="mt-8 grid gap-10 lg:grid-cols-12 lg:gap-14">
           <div className="lg:col-span-7">
             <Reveal>
-              <MotoGallery
-                photos={moto.photos.map((p) => p.url)}
-                title={`${moto.brand} ${moto.model}`}
-              />
+              {spinFrames.length > 0 ? (
+                <div className="space-y-6">
+                  <SpinViewer
+                    frames={spinFrames}
+                    title={`${moto.brand} ${moto.model}`}
+                  />
+
+                  {galleryPhotos.length > 0 && (
+                    <div>
+                      <p className="eyebrow mb-3 text-brand-chrome-dim">Fotos</p>
+                      <MotoGallery
+                        photos={galleryPhotos}
+                        title={`${moto.brand} ${moto.model}`}
+                      />
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <MotoGallery
+                  photos={galleryPhotos}
+                  title={`${moto.brand} ${moto.model}`}
+                />
+              )}
             </Reveal>
           </div>
 

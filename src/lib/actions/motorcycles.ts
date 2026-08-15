@@ -73,8 +73,8 @@ export async function createMotorcycle(formData: FormData) {
     throw error;
   }
 
-  const photoUrls = formData.getAll("photoUrls").map(String).filter(Boolean);
-  await savePhotoUrls(motorcycle.id, photoUrls);
+  await savePhotoUrls(motorcycle.id, formData.getAll("photoUrls").map(String).filter(Boolean));
+  await saveSpinUrls(motorcycle.id, formData.getAll("spinUrls").map(String).filter(Boolean));
 
   revalidatePath("/panel/motos");
   redirect(`/panel/motos/${motorcycle.id}`);
@@ -92,8 +92,8 @@ export async function updateMotorcycle(id: string, formData: FormData) {
     throw error;
   }
 
-  const photoUrls = formData.getAll("photoUrls").map(String).filter(Boolean);
-  await savePhotoUrls(id, photoUrls);
+  await savePhotoUrls(id, formData.getAll("photoUrls").map(String).filter(Boolean));
+  await saveSpinUrls(id, formData.getAll("spinUrls").map(String).filter(Boolean));
 
   revalidatePath("/panel/motos");
   revalidatePath(`/panel/motos/${id}`);
@@ -103,7 +103,9 @@ export async function updateMotorcycle(id: string, formData: FormData) {
 async function savePhotoUrls(motorcycleId: string, urls: string[]) {
   if (urls.length === 0) return;
 
-  const existingCount = await prisma.photo.count({ where: { motorcycleId } });
+  const existingCount = await prisma.photo.count({
+    where: { motorcycleId, isSpin: false },
+  });
 
   await prisma.photo.createMany({
     data: urls.map((url, index) => ({
@@ -112,6 +114,45 @@ async function savePhotoUrls(motorcycleId: string, urls: string[]) {
       order: existingCount + index,
     })),
   });
+}
+
+/**
+ * Los cuadros del giro son una secuencia completa: subir un video nuevo
+ * reemplaza el giro anterior en vez de acumularse.
+ */
+async function saveSpinUrls(motorcycleId: string, urls: string[]) {
+  if (urls.length === 0) return;
+
+  const previous = await prisma.photo.findMany({
+    where: { motorcycleId, isSpin: true },
+  });
+
+  await prisma.photo.deleteMany({ where: { motorcycleId, isSpin: true } });
+
+  await prisma.photo.createMany({
+    data: urls.map((url, index) => ({
+      motorcycleId,
+      url,
+      order: index,
+      isSpin: true,
+    })),
+  });
+
+  await Promise.all(previous.map((p) => deleteMotorcyclePhoto(p.url)));
+}
+
+export async function removeSpin(motorcycleId: string) {
+  await requireSession();
+
+  const frames = await prisma.photo.findMany({
+    where: { motorcycleId, isSpin: true },
+  });
+
+  await prisma.photo.deleteMany({ where: { motorcycleId, isSpin: true } });
+  await Promise.all(frames.map((p) => deleteMotorcyclePhoto(p.url)));
+
+  revalidatePath(`/panel/motos/${motorcycleId}`);
+  revalidatePath(`/catalogo/${motorcycleId}`);
 }
 
 export async function removePhoto(photoId: string, motorcycleId: string) {
