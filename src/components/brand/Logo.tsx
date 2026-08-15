@@ -18,7 +18,7 @@ export default function Logo({ size = 40 }: { size?: number }) {
     >
       <motion.div
         aria-hidden
-        className="absolute inset-0 -z-10 rounded-full bg-brand-orange blur-md"
+        className="pointer-events-none absolute inset-0 rounded-full bg-brand-orange blur-md"
         animate={{ opacity: [0.15, 0.5, 0.15], scale: [0.85, 1.05, 0.85] }}
         transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
       />
@@ -27,7 +27,7 @@ export default function Logo({ size = 40 }: { size?: number }) {
         alt="Compraventa Surtimotos"
         width={size}
         height={size}
-        className="rounded-md object-cover"
+        className="relative object-cover"
         priority
       />
     </motion.div>

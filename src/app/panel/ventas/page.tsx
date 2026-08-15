@@ -28,7 +28,7 @@ export default async function VentasPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="panel-heading font-brand text-2xl font-bold uppercase italic">
+        <h1 className="display text-3xl text-white sm:text-4xl">
           Ventas
         </h1>
         <Link href="/panel/ventas/nueva" className="panel-btn-primary">
@@ -36,7 +36,7 @@ export default async function VentasPage() {
         </Link>
       </div>
 
-      <div className="mt-6 grid grid-cols-3 gap-4">
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <SummaryCard label="Ventas este mes" value={String(salesThisMonth.length)} />
         <SummaryCard
           label="Facturado este mes"
@@ -91,9 +91,9 @@ export default async function VentasPage() {
 
 function SummaryCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="panel-card p-4">
-      <p className="panel-muted text-xs">{label}</p>
-      <p className="panel-heading mt-1 text-xl font-semibold">{value}</p>
+    <div className="panel-card p-5 corner-cut">
+      <p className="eyebrow text-brand-chrome-dim">{label}</p>
+      <p className="display mt-3 text-2xl text-white">{value}</p>
     </div>
   );
 }

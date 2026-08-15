@@ -20,7 +20,11 @@ export default async function PanelLayout({
     <div className="panel-shell flex min-h-screen flex-col lg:flex-row">
       <SplashOverlay />
       <PanelSidebar userEmail={session.user.email ?? ""} onSignOut={handleSignOut} />
-      <main className="flex-1 p-4 sm:p-8">{children}</main>
+
+      <main className="relative min-w-0 flex-1 p-4 sm:p-8">
+        <div className="grid-floor pointer-events-none absolute inset-x-0 top-0 h-[420px] opacity-40" />
+        <div className="relative">{children}</div>
+      </main>
     </div>
   );
 }

@@ -15,7 +15,7 @@ export default async function NuevaVentaPage() {
 
   return (
     <div className="max-w-lg">
-      <h1 className="panel-heading font-brand text-2xl font-bold uppercase italic">
+      <h1 className="display text-3xl text-white sm:text-4xl">
         Registrar venta
       </h1>
 

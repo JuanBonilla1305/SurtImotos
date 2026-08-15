@@ -131,7 +131,7 @@ export default function PhotoInput({
       {photos.length > 0 && (
         <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-6">
           {photos.map((photo, i) => (
-            <div key={i} className="relative aspect-square overflow-hidden rounded-md border border-white/10 bg-black/30">
+            <div key={i} className="relative aspect-square overflow-hidden border border-white/10 bg-black/30">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={photo.previewUrl} alt="" className="h-full w-full object-contain" />
               {photo.status === "uploading" && (

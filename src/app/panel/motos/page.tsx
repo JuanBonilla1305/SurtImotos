@@ -14,6 +14,9 @@ const STATUS_BADGE: Record<string, string> = {
   VENDIDA: "bg-white/10 text-brand-chrome-dim",
 };
 
+const BADGE_BASE =
+  "shrink-0 px-2 py-0.5 font-condensed text-[10px] font-bold uppercase tracking-[0.16em]";
+
 export default async function MotosPage({
   searchParams,
 }: {
@@ -41,7 +44,7 @@ export default async function MotosPage({
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="panel-heading font-brand text-2xl font-bold uppercase italic">
+        <h1 className="display text-3xl text-white sm:text-4xl">
           Inventario de motos
         </h1>
         <Link href="/panel/motos/nuevo" className="panel-btn-primary">
@@ -73,37 +76,36 @@ export default async function MotosPage({
           <Link
             key={moto.id}
             href={`/panel/motos/${moto.id}`}
-            className="panel-card block overflow-hidden transition hover:border-brand-orange/40"
+            className="panel-card group block overflow-hidden corner-cut hover:-translate-y-1 hover:border-brand-orange/50"
           >
-            <div className="aspect-video bg-black/30">
+            <div className="relative aspect-video overflow-hidden bg-black/40">
+              <div className="grid-floor absolute inset-0 opacity-40" />
               {moto.photos[0] ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={moto.photos[0].url}
                   alt={`${moto.brand} ${moto.model}`}
-                  className="h-full w-full object-contain"
+                  loading="lazy"
+                  className="relative h-full w-full object-contain p-2 transition-transform duration-500 group-hover:scale-105"
                 />
               ) : (
-                <div className="panel-muted flex h-full items-center justify-center text-sm">
+                <div className="panel-muted relative flex h-full items-center justify-center font-condensed text-xs uppercase tracking-[0.2em]">
                   Sin foto
                 </div>
               )}
+              <span className={`absolute right-0 top-0 ${BADGE_BASE} ${STATUS_BADGE[moto.status]}`}>
+                {STATUS_LABEL[moto.status]}
+              </span>
             </div>
+
             <div className="p-4">
-              <div className="flex items-center justify-between">
-                <p className="panel-heading font-medium">
-                  {moto.brand} {moto.model} · {moto.year}
-                </p>
-                <span
-                  className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGE[moto.status]}`}
-                >
-                  {STATUS_LABEL[moto.status]}
-                </span>
-              </div>
-              <p className="panel-muted mt-1 text-sm">
-                Placa {moto.plate} · {moto.displacementCc}cc
+              <p className="font-condensed text-lg font-semibold uppercase tracking-wide text-white transition-colors group-hover:text-brand-orange">
+                {moto.brand} {moto.model} · {moto.year}
               </p>
-              <p className="mt-2 text-sm font-semibold text-brand-orange">
+              <p className="panel-muted mt-1 text-xs uppercase tracking-[0.14em]">
+                Placa {moto.plate} · {moto.displacementCc} cc
+              </p>
+              <p className="display mt-3 text-xl text-brand-orange">
                 ${Number(moto.salePrice).toLocaleString("es-CO")}
               </p>
             </div>

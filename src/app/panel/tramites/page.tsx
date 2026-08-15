@@ -16,7 +16,7 @@ export default async function TramitesPage() {
 
   return (
     <div>
-      <h1 className="panel-heading font-brand text-2xl font-bold uppercase italic">
+      <h1 className="display text-3xl text-white sm:text-4xl">
         Trámites
       </h1>
       <p className="panel-muted mt-1 text-sm">
