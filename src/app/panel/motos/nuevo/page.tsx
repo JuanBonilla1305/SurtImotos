@@ -1,6 +1,7 @@
 import MotorcycleForm from "@/components/MotorcycleForm";
 import FormError from "@/components/panel/FormError";
 import { createMotorcycle } from "@/lib/actions/motorcycles";
+import { getKnownMotoPairs } from "@/lib/known-motos";
 
 export default async function NuevaMotoPage({
   searchParams,
@@ -8,6 +9,7 @@ export default async function NuevaMotoPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const { error } = await searchParams;
+  const knownPairs = await getKnownMotoPairs();
 
   return (
     <div>
@@ -16,7 +18,7 @@ export default async function NuevaMotoPage({
       </h1>
       <div className="mt-6">
         <FormError message={error} />
-        <MotorcycleForm action={createMotorcycle} />
+        <MotorcycleForm action={createMotorcycle} knownPairs={knownPairs} />
       </div>
     </div>
   );

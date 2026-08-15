@@ -5,7 +5,7 @@ import PhotoInput from "@/components/panel/PhotoInput";
 import SpinInput from "@/components/panel/SpinInput";
 import Combobox from "@/components/panel/Combobox";
 import MotoLoader from "@/components/brand/MotoLoader";
-import { MOTO_BRANDS, modelsForBrand } from "@/lib/moto-catalog";
+import { brandOptions, modelsForBrand, type KnownPair } from "@/lib/moto-catalog";
 
 type MotorcycleFormValues = {
   brand?: string;
@@ -22,10 +22,13 @@ export default function MotorcycleForm({
   action,
   defaultValues,
   spinFrameCount = 0,
+  knownPairs = [],
 }: {
   action: (formData: FormData) => void | Promise<void>;
   defaultValues?: MotorcycleFormValues;
   spinFrameCount?: number;
+  /** Marcas y líneas ya registradas, para sumarlas a las sugerencias. */
+  knownPairs?: KnownPair[];
 }) {
   const [uploadingPhotos, setUploadingPhotos] = useState(false);
   const [buildingSpin, setBuildingSpin] = useState(false);
@@ -34,7 +37,8 @@ export default function MotorcycleForm({
   const [brand, setBrand] = useState(defaultValues?.brand ?? "");
   const [model, setModel] = useState(defaultValues?.model ?? "");
 
-  const modelOptions = useMemo(() => modelsForBrand(brand), [brand]);
+  const brands = useMemo(() => brandOptions(knownPairs), [knownPairs]);
+  const modelOptions = useMemo(() => modelsForBrand(brand, knownPairs), [brand, knownPairs]);
 
   return (
     <form action={action} className="max-w-3xl space-y-5">
@@ -43,12 +47,12 @@ export default function MotorcycleForm({
           <Combobox
             name="brand"
             required
-            options={MOTO_BRANDS}
+            options={brands}
             value={brand}
             onValueChange={(next) => {
               setBrand(next);
               // Cambiar de marca deja una línea que ya no corresponde.
-              if (model && !modelsForBrand(next).includes(model)) setModel("");
+              if (model && !modelsForBrand(next, knownPairs).includes(model)) setModel("");
             }}
             placeholder="Escribe y elige…"
           />

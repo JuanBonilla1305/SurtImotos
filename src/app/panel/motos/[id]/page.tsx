@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import MotorcycleForm from "@/components/MotorcycleForm";
 import FormError from "@/components/panel/FormError";
 import DeleteMotorcycleButton from "@/components/panel/DeleteMotorcycleButton";
+import { getKnownMotoPairs } from "@/lib/known-motos";
 import {
   updateMotorcycle,
   removePhoto,
@@ -21,10 +22,13 @@ export default async function MotoDetailPage({
   const { id } = await params;
   const { error } = await searchParams;
 
-  const motorcycle = await prisma.motorcycle.findUnique({
-    where: { id },
-    include: { photos: { orderBy: { order: "asc" } } },
-  });
+  const [motorcycle, knownPairs] = await Promise.all([
+    prisma.motorcycle.findUnique({
+      where: { id },
+      include: { photos: { orderBy: { order: "asc" } } },
+    }),
+    getKnownMotoPairs(),
+  ]);
 
   if (!motorcycle) notFound();
 
@@ -142,6 +146,7 @@ export default async function MotoDetailPage({
             description: motorcycle.description,
           }}
           spinFrameCount={spinFrames.length}
+          knownPairs={knownPairs}
         />
       </div>
     </div>
