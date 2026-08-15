@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { deleteMotorcyclePhoto } from "@/lib/supabase/photos";
+import { canonicalBrand, cleanText } from "@/lib/moto-catalog";
 
 const FIELD_LABEL: Record<string, string> = {
   plate: "la placa",
@@ -42,8 +43,9 @@ const MotorcycleSchema = z.object({
 
 function parseMotorcycleForm(formData: FormData) {
   const raw = {
-    brand: String(formData.get("brand") ?? ""),
-    model: String(formData.get("model") ?? ""),
+    // Se normalizan para que "yamaha " y "Yamaha" no acaben como dos marcas.
+    brand: canonicalBrand(String(formData.get("brand") ?? "")),
+    model: cleanText(String(formData.get("model") ?? "")),
     year: String(formData.get("year") ?? ""),
     displacementCc: String(formData.get("displacementCc") ?? ""),
     plate: String(formData.get("plate") ?? "").toUpperCase().trim(),

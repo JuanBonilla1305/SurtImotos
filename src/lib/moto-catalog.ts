@@ -82,6 +82,22 @@ export function normalize(text: string): string {
     .trim();
 }
 
+/** Recorta y colapsa espacios repetidos. */
+export function cleanText(text: string): string {
+  return text.trim().replace(/\s+/g, " ");
+}
+
+/**
+ * Devuelve la marca con la escritura del banco cuando la reconoce.
+ * Así "yamaha ", "YAMAHA" y "Yamaha" acaban guardados igual y no aparecen como
+ * marcas distintas en el filtro del catálogo.
+ */
+export function canonicalBrand(input: string): string {
+  const cleaned = cleanText(input);
+  const target = normalize(cleaned);
+  return MOTO_BRANDS.find((brand) => normalize(brand) === target) ?? cleaned;
+}
+
 /** Líneas sugeridas para una marca. Si no se reconoce, devuelve todas. */
 export function modelsForBrand(brand: string): string[] {
   const target = normalize(brand);

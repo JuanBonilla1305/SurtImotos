@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import MotoCard, { type Moto } from "@/components/MotoCard";
+import { normalize } from "@/lib/moto-catalog";
 
 type SortKey = "recientes" | "km-asc" | "cc-desc";
 
@@ -16,13 +17,22 @@ export default function CatalogGrid({ motos }: { motos: Moto[] }) {
   const [brand, setBrand] = useState("todas");
   const [sort, setSort] = useState<SortKey>("recientes");
 
-  const brands = useMemo(
-    () => Array.from(new Set(motos.map((m) => m.brand))).sort((a, b) => a.localeCompare(b)),
-    [motos]
-  );
+  // Se agrupan ignorando mayúsculas y espacios: hay filas antiguas guardadas
+  // como "Yamaha " que si no aparecerían como una marca aparte.
+  const brands = useMemo(() => {
+    const unique = new Map<string, string>();
+    for (const moto of motos) {
+      const key = normalize(moto.brand);
+      if (key && !unique.has(key)) unique.set(key, moto.brand.trim());
+    }
+    return [...unique.values()].sort((a, b) => a.localeCompare(b, "es"));
+  }, [motos]);
 
   const visible = useMemo(() => {
-    const filtered = brand === "todas" ? motos : motos.filter((m) => m.brand === brand);
+    const filtered =
+      brand === "todas"
+        ? motos
+        : motos.filter((m) => normalize(m.brand) === normalize(brand));
     if (sort === "km-asc") {
       // Las motos sin kilometraje registrado van al final.
       return [...filtered].sort(
