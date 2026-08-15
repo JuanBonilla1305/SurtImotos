@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { signIn } from "@/lib/auth";
 import { AuthError } from "next-auth";
 import Logo from "@/components/brand/Logo";
 import SpeedLines from "@/components/brand/SpeedLines";
+import FormError from "@/components/panel/FormError";
 
 async function login(formData: FormData) {
   "use server";
@@ -13,14 +15,25 @@ async function login(formData: FormData) {
       redirectTo: "/panel",
     });
   } catch (error) {
+    // Unas credenciales equivocadas no son un fallo del servidor: se vuelve al
+    // formulario con el aviso en vez de reventar con un error 500.
     if (error instanceof AuthError) {
-      throw new Error("Credenciales inválidas");
+      // Codificado: la eñe sin escapar rompe la URL de la redirección.
+      redirect(`/login?error=${encodeURIComponent("Correo o contraseña incorrectos")}`);
     }
+    // Un inicio de sesión correcto también sale por aquí: signIn lanza la
+    // redirección a /panel, que debe seguir su curso.
     throw error;
   }
 }
 
-export default function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const { error } = await searchParams;
+
   return (
     <div className="grain relative flex min-h-screen items-center justify-center overflow-hidden bg-brand-black px-4 py-12">
       <div className="grid-floor pointer-events-none absolute inset-0" />
@@ -47,6 +60,8 @@ export default function LoginPage() {
           </div>
 
           <div className="rule-glow" />
+
+          <FormError message={error} />
 
           <div className="space-y-1.5">
             <label htmlFor="email" className="panel-label">
