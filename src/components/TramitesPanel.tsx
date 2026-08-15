@@ -7,8 +7,6 @@ type Moto = {
   brand: string;
   model: string;
   plate: string;
-  chassisNumber: string;
-  engineNumber: string | null;
 };
 
 const LINKS = [
@@ -36,20 +34,20 @@ const LINKS = [
 
 export default function TramitesPanel({ motorcycles }: { motorcycles: Moto[] }) {
   const [selectedId, setSelectedId] = useState("");
-  const [copied, setCopied] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const selected = motorcycles.find((m) => m.id === selectedId);
 
-  function copy(label: string, value: string) {
-    navigator.clipboard.writeText(value);
-    setCopied(label);
-    setTimeout(() => setCopied(null), 1500);
+  function copyPlate(plate: string) {
+    navigator.clipboard.writeText(plate);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
   }
 
   return (
     <div>
-      <div className="panel-card p-4">
-        <label className="panel-label">Moto para copiar datos rápidamente</label>
+      <div className="panel-card p-5">
+        <label className="panel-label">Copiar la placa de una moto</label>
         <select
           value={selectedId}
           onChange={(e) => setSelectedId(e.target.value)}
@@ -64,28 +62,13 @@ export default function TramitesPanel({ motorcycles }: { motorcycles: Moto[] }) 
         </select>
 
         {selected && (
-          <div className="mt-4 flex flex-wrap gap-2">
-            <CopyButton
-              label="Placa"
-              value={selected.plate}
-              copied={copied === "Placa"}
-              onCopy={copy}
-            />
-            <CopyButton
-              label="Chasis"
-              value={selected.chassisNumber}
-              copied={copied === "Chasis"}
-              onCopy={copy}
-            />
-            {selected.engineNumber && (
-              <CopyButton
-                label="Motor"
-                value={selected.engineNumber}
-                copied={copied === "Motor"}
-                onCopy={copy}
-              />
-            )}
-          </div>
+          <button
+            type="button"
+            onClick={() => copyPlate(selected.plate)}
+            className="panel-btn-secondary mt-4"
+          >
+            {copied ? "¡Copiada!" : `Copiar placa: ${selected.plate}`}
+          </button>
         )}
       </div>
 
@@ -96,31 +79,15 @@ export default function TramitesPanel({ motorcycles }: { motorcycles: Moto[] }) 
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="panel-card block p-4 transition hover:border-brand-orange/40"
+            className="panel-card group block p-5 corner-cut hover:-translate-y-1 hover:border-brand-orange/50"
           >
-            <p className="panel-heading font-medium">{link.name} ↗</p>
-            <p className="panel-muted mt-1 text-sm">{link.description}</p>
+            <p className="font-condensed text-base font-semibold uppercase tracking-wide text-white transition-colors group-hover:text-brand-orange">
+              {link.name} ↗
+            </p>
+            <p className="panel-muted mt-1.5 text-sm">{link.description}</p>
           </a>
         ))}
       </div>
     </div>
-  );
-}
-
-function CopyButton({
-  label,
-  value,
-  copied,
-  onCopy,
-}: {
-  label: string;
-  value: string;
-  copied: boolean;
-  onCopy: (label: string, value: string) => void;
-}) {
-  return (
-    <button type="button" onClick={() => onCopy(label, value)} className="panel-btn-secondary">
-      {copied ? "¡Copiado!" : `Copiar ${label}: ${value}`}
-    </button>
   );
 }

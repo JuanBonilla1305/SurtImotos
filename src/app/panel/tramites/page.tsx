@@ -9,8 +9,6 @@ export default async function TramitesPage() {
       brand: true,
       model: true,
       plate: true,
-      chassisNumber: true,
-      engineNumber: true,
     },
   });
 

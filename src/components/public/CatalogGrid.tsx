@@ -4,12 +4,12 @@ import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import MotoCard, { type Moto } from "@/components/MotoCard";
 
-type SortKey = "recientes" | "precio-asc" | "precio-desc";
+type SortKey = "recientes" | "km-asc" | "cc-desc";
 
 const SORTS: { key: SortKey; label: string }[] = [
   { key: "recientes", label: "Recientes" },
-  { key: "precio-asc", label: "Menor precio" },
-  { key: "precio-desc", label: "Mayor precio" },
+  { key: "km-asc", label: "Menos kilómetros" },
+  { key: "cc-desc", label: "Más cilindraje" },
 ];
 
 export default function CatalogGrid({ motos }: { motos: Moto[] }) {
@@ -23,8 +23,15 @@ export default function CatalogGrid({ motos }: { motos: Moto[] }) {
 
   const visible = useMemo(() => {
     const filtered = brand === "todas" ? motos : motos.filter((m) => m.brand === brand);
-    if (sort === "precio-asc") return [...filtered].sort((a, b) => a.salePrice - b.salePrice);
-    if (sort === "precio-desc") return [...filtered].sort((a, b) => b.salePrice - a.salePrice);
+    if (sort === "km-asc") {
+      // Las motos sin kilometraje registrado van al final.
+      return [...filtered].sort(
+        (a, b) => (a.mileageKm ?? Infinity) - (b.mileageKm ?? Infinity)
+      );
+    }
+    if (sort === "cc-desc") {
+      return [...filtered].sort((a, b) => b.displacementCc - a.displacementCc);
+    }
     return filtered;
   }, [motos, brand, sort]);
 

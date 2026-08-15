@@ -15,22 +15,18 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 export default async function DashboardPage() {
-  const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
-  const [availableCount, reservedCount, salesThisMonth, recentMotorcycles] = await Promise.all([
-    prisma.motorcycle.count({ where: { status: "DISPONIBLE" } }),
-    prisma.motorcycle.count({ where: { status: "RESERVADA" } }),
-    prisma.sale.findMany({ where: { soldAt: { gte: startOfMonth } } }),
-    prisma.motorcycle.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 6,
-      include: { photos: { orderBy: { order: "asc" }, take: 1 } },
-    }),
-  ]);
-
-  const totalThisMonth = salesThisMonth.reduce((acc, s) => acc + Number(s.finalPrice), 0);
-  const monthLabel = now.toLocaleDateString("es-CO", { month: "long", year: "numeric" });
+  const [availableCount, reservedCount, soldCount, totalCount, recentMotorcycles] =
+    await Promise.all([
+      prisma.motorcycle.count({ where: { status: "DISPONIBLE" } }),
+      prisma.motorcycle.count({ where: { status: "RESERVADA" } }),
+      prisma.motorcycle.count({ where: { status: "VENDIDA" } }),
+      prisma.motorcycle.count(),
+      prisma.motorcycle.findMany({
+        orderBy: { createdAt: "desc" },
+        take: 6,
+        include: { photos: { orderBy: { order: "asc" }, take: 1 } },
+      }),
+    ]);
 
   return (
     <div>
@@ -41,28 +37,19 @@ export default async function DashboardPage() {
             Panel de control
           </p>
           <h1 className="display mt-3 text-4xl text-white sm:text-5xl">Dashboard</h1>
-          <p className="panel-muted mt-2 text-sm capitalize">{monthLabel}</p>
+          <p className="panel-muted mt-2 text-sm">Estado del inventario.</p>
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          <Link href="/panel/motos/nuevo" className="panel-btn-primary">
-            + Nueva moto
-          </Link>
-          <Link href="/panel/ventas/nueva" className="panel-btn-secondary">
-            Registrar venta
-          </Link>
-        </div>
+        <Link href="/panel/motos/nuevo" className="panel-btn-primary">
+          + Nueva moto
+        </Link>
       </div>
 
       <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard label="Disponibles" value={<Counter to={availableCount} />} accent />
         <StatCard label="Reservadas" value={<Counter to={reservedCount} />} />
-        <StatCard label="Ventas del mes" value={<Counter to={salesThisMonth.length} />} />
-        <StatCard
-          label="Facturado del mes"
-          value={<Counter to={totalThisMonth} prefix="$" />}
-          small
-        />
+        <StatCard label="Vendidas" value={<Counter to={soldCount} />} />
+        <StatCard label="Total registradas" value={<Counter to={totalCount} />} />
       </div>
 
       <div className="mt-10">
@@ -132,12 +119,10 @@ function StatCard({
   label,
   value,
   accent = false,
-  small = false,
 }: {
   label: string;
   value: React.ReactNode;
   accent?: boolean;
-  small?: boolean;
 }) {
   return (
     <div
@@ -149,11 +134,7 @@ function StatCard({
         <div className="pointer-events-none absolute -right-10 -top-10 h-24 w-24 rounded-full bg-brand-orange/20 blur-2xl" />
       )}
       <p className="eyebrow text-brand-chrome-dim">{label}</p>
-      <p
-        className={`display mt-3 text-white ${small ? "text-2xl" : "text-4xl"} ${
-          accent ? "text-brand-orange" : ""
-        }`}
-      >
+      <p className={`display mt-3 text-4xl ${accent ? "text-brand-orange" : "text-white"}`}>
         {value}
       </p>
     </div>

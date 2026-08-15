@@ -23,13 +23,6 @@ enum MotorcycleStatus {
   VENDIDA
 }
 
-enum PaymentMethod {
-  EFECTIVO
-  TRANSFERENCIA
-  FINANCIADO
-  MIXTO
-}
-
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
@@ -37,20 +30,6 @@ model User {
   name         String
   role         Role     @default(ADMIN)
   createdAt    DateTime @default(now())
-  sales        Sale[]
-}
-
-model Client {
-  id        String   @id @default(cuid())
-  name      String
-  document  String?  @unique
-  phone     String?
-  address   String?
-  email     String?
-  createdAt DateTime @default(now())
-
-  motorcyclesSupplied Motorcycle[] @relation("SupplierClient")
-  purchases           Sale[]       @relation("BuyerClient")
 }
 
 model Motorcycle {
@@ -60,23 +39,14 @@ model Motorcycle {
   year           Int
   displacementCc Int
   plate          String           @unique
-  chassisNumber  String           @unique
-  engineNumber   String?
   color          String?
   mileageKm      Int?
-  purchasePrice  Decimal?         @db.Decimal(12, 2)
-  salePrice      Decimal          @db.Decimal(12, 2)
   status         MotorcycleStatus @default(DISPONIBLE)
   description    String?
-  acquiredAt     DateTime         @default(now())
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 
-  supplierId String?
-  supplier   Client? @relation("SupplierClient", fields: [supplierId], references: [id])
-
   photos Photo[]
-  sale   Sale?
 }
 
 model Photo {
@@ -85,18 +55,4 @@ model Photo {
   order        Int        @default(0)
   motorcycleId String
   motorcycle   Motorcycle @relation(fields: [motorcycleId], references: [id], onDelete: Cascade)
-}
-
-model Sale {
-  id            String        @id @default(cuid())
-  motorcycleId  String        @unique
-  motorcycle    Motorcycle    @relation(fields: [motorcycleId], references: [id])
-  buyerId       String
-  buyer         Client        @relation("BuyerClient", fields: [buyerId], references: [id])
-  sellerId      String
-  seller        User          @relation(fields: [sellerId], references: [id])
-  finalPrice    Decimal       @db.Decimal(12, 2)
-  paymentMethod PaymentMethod @default(EFECTIVO)
-  soldAt        DateTime      @default(now())
-  createdAt     DateTime      @default(now())
 }

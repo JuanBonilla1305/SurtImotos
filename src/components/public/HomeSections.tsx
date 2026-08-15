@@ -24,7 +24,7 @@ export function Catalogo({ motos }: { motos: Moto[] }) {
           <p className="max-w-xs text-sm leading-relaxed text-brand-chrome-dim">
             {motos.length === 0
               ? "Inventario en actualización."
-              : `${motos.length} ${motos.length === 1 ? "moto revisada" : "motos revisadas"}, con papeles al día y precio cerrado. Filtra por marca o precio.`}
+              : `${motos.length} ${motos.length === 1 ? "moto revisada" : "motos revisadas"}, con papeles al día. Filtra por marca, kilometraje o cilindraje.`}
           </p>
         </Reveal>
 

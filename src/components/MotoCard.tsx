@@ -10,7 +10,6 @@ export type Moto = {
   year: number;
   displacementCc: number;
   mileageKm: number | null;
-  salePrice: number;
   photoUrl?: string | null;
 };
 
@@ -80,17 +79,12 @@ export default function MotoCard({ moto, index = 0 }: { moto: Moto; index?: numb
             )}
           </div>
 
-          <div className="mt-5 flex items-end justify-between border-t border-white/10 pt-4">
-            <div>
-              <p className="font-condensed text-[10px] uppercase tracking-[0.22em] text-brand-chrome-dim">
-                Precio
-              </p>
-              <p className="display mt-0.5 text-2xl text-brand-orange">
-                ${moto.salePrice.toLocaleString("es-CO")}
-              </p>
-            </div>
+          <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
+            <p className="font-condensed text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-chrome-dim">
+              Precio: consultar
+            </p>
 
-            <span className="flex items-center gap-1.5 font-condensed text-xs font-bold uppercase tracking-[0.16em] text-brand-chrome transition-colors group-hover:text-white">
+            <span className="flex items-center gap-1.5 font-condensed text-xs font-bold uppercase tracking-[0.16em] text-brand-orange transition-colors group-hover:text-white">
               Ver ficha
               <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">
                 →

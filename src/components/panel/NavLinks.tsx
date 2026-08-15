@@ -7,8 +7,6 @@ import { motion } from "framer-motion";
 const NAV_ITEMS = [
   { href: "/panel", label: "Dashboard", icon: GaugeIcon },
   { href: "/panel/motos", label: "Inventario", icon: BikeIcon },
-  { href: "/panel/ventas", label: "Ventas", icon: TagIcon },
-  { href: "/panel/clientes", label: "Clientes", icon: UsersIcon },
   { href: "/panel/tramites", label: "Trámites", icon: DocIcon },
 ];
 
@@ -66,24 +64,6 @@ function BikeIcon({ className }: IconProps) {
       <circle cx="5" cy="17" r="3.2" />
       <circle cx="19" cy="17" r="3.2" />
       <path d="M5 17h4l4-7h4M13 10 11 7H8m9 3 2 7" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function TagIcon({ className }: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} aria-hidden>
-      <path d="M3 12V4h8l9 9-8 8-9-9z" strokeLinejoin="round" />
-      <circle cx="7.5" cy="7.5" r="1.3" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
-function UsersIcon({ className }: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} aria-hidden>
-      <circle cx="9" cy="8" r="3.4" />
-      <path d="M3 20c0-3.3 2.7-5.4 6-5.4s6 2.1 6 5.4M16 5.2a3.4 3.4 0 0 1 0 6.6M18 20c0-2.4-.9-4-2.4-5" strokeLinecap="round" />
     </svg>
   );
 }

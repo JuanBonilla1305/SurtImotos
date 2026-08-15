@@ -77,14 +77,12 @@ export default async function CatalogoDetailPage({
                 <span className="text-brand-orange">{moto.model}</span>
               </h1>
 
-              <div className="mt-7 flex items-end justify-between border border-white/10 bg-brand-charcoal p-5 corner-cut">
-                <div>
-                  <p className="eyebrow text-brand-chrome-dim">Precio de venta</p>
-                  <p className="display mt-1 text-4xl text-white">
-                    ${Number(moto.salePrice).toLocaleString("es-CO")}
-                  </p>
-                </div>
-                <span className="font-mono text-xs text-brand-chrome-dim">COP</span>
+              <div className="mt-7 border border-white/10 bg-brand-charcoal p-5 corner-cut">
+                <p className="eyebrow text-brand-chrome-dim">Precio</p>
+                <p className="display mt-1 text-3xl text-white">Consúltanos</p>
+                <p className="mt-2 text-sm leading-relaxed text-brand-chrome-dim">
+                  Te damos el precio y la disponibilidad al momento por WhatsApp.
+                </p>
               </div>
 
               <dl className="mt-6 grid grid-cols-2 gap-px overflow-hidden border border-white/10 bg-white/10">
@@ -160,7 +158,6 @@ export default async function CatalogoDetailPage({
                     year: item.year,
                     displacementCc: item.displacementCc,
                     mileageKm: item.mileageKm,
-                    salePrice: Number(item.salePrice),
                     photoUrl: item.photos[0]?.url,
                   }}
                 />

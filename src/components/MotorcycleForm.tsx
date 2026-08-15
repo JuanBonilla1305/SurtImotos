@@ -4,32 +4,23 @@ import { useState } from "react";
 import PhotoInput from "@/components/panel/PhotoInput";
 import MotoLoader from "@/components/brand/MotoLoader";
 
-type Client = { id: string; name: string };
-
 type MotorcycleFormValues = {
   brand?: string;
   model?: string;
   year?: number;
   displacementCc?: number;
   plate?: string;
-  chassisNumber?: string;
-  engineNumber?: string | null;
   color?: string | null;
   mileageKm?: number | null;
-  purchasePrice?: unknown;
-  salePrice?: unknown;
   description?: string | null;
-  supplierId?: string | null;
 };
 
 export default function MotorcycleForm({
   action,
   defaultValues,
-  suppliers,
 }: {
   action: (formData: FormData) => void | Promise<void>;
   defaultValues?: MotorcycleFormValues;
-  suppliers: Client[];
 }) {
   const [uploading, setUploading] = useState(false);
 
@@ -45,34 +36,8 @@ export default function MotorcycleForm({
         <Field label="Placa *">
           <input name="plate" required defaultValue={defaultValues?.plate} className="panel-input" />
         </Field>
-        <Field label="Chasis *">
-          <input
-            name="chassisNumber"
-            required
-            defaultValue={defaultValues?.chassisNumber}
-            className="panel-input"
-          />
-        </Field>
-        <Field label="Número de motor">
-          <input
-            name="engineNumber"
-            defaultValue={defaultValues?.engineNumber ?? ""}
-            className="panel-input"
-          />
-        </Field>
-        <Field label="Proveedor (de quien se compró)">
-          <select
-            name="supplierId"
-            defaultValue={defaultValues?.supplierId ?? ""}
-            className="panel-select"
-          >
-            <option value="">— Sin especificar —</option>
-            {suppliers.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </select>
+        <Field label="Color">
+          <input name="color" defaultValue={defaultValues?.color ?? ""} className="panel-input" />
         </Field>
       </Section>
 
@@ -103,40 +68,9 @@ export default function MotorcycleForm({
             className="panel-input"
           />
         </Field>
-        <Field label="Color">
-          <input name="color" defaultValue={defaultValues?.color ?? ""} className="panel-input" />
-        </Field>
       </Section>
 
-      <Section title="Precios" step="03">
-        <Field label="Precio de compra">
-          <input
-            name="purchasePrice"
-            type="number"
-            step="0.01"
-            defaultValue={
-              defaultValues?.purchasePrice != null
-                ? String(defaultValues.purchasePrice)
-                : ""
-            }
-            className="panel-input"
-          />
-        </Field>
-        <Field label="Precio de venta *">
-          <input
-            name="salePrice"
-            type="number"
-            step="0.01"
-            required
-            defaultValue={
-              defaultValues?.salePrice != null ? String(defaultValues.salePrice) : ""
-            }
-            className="panel-input"
-          />
-        </Field>
-      </Section>
-
-      <Section title="Publicación" step="04" full>
+      <Section title="Publicación" step="03" full>
         <Field label="Descripción">
           <textarea
             name="description"

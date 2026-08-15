@@ -19,7 +19,6 @@ export default async function HomePage() {
     year: moto.year,
     displacementCc: moto.displacementCc,
     mileageKm: moto.mileageKm,
-    salePrice: Number(moto.salePrice),
     photoUrl: moto.photos[0]?.url,
   }));
 

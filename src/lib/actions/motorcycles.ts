@@ -10,8 +10,6 @@ import { deleteMotorcyclePhoto } from "@/lib/supabase/photos";
 
 const FIELD_LABEL: Record<string, string> = {
   plate: "la placa",
-  chassisNumber: "el chasis",
-  engineNumber: "el número de motor",
 };
 
 function duplicateFieldMessage(error: unknown): string | null {
@@ -37,14 +35,9 @@ const MotorcycleSchema = z.object({
   year: z.coerce.number().int().min(1980).max(2100),
   displacementCc: z.coerce.number().int().min(0),
   plate: z.string().min(1, "La placa es obligatoria"),
-  chassisNumber: z.string().min(1, "El chasis es obligatorio"),
-  engineNumber: z.string().optional(),
   color: z.string().optional(),
   mileageKm: z.coerce.number().int().min(0).optional(),
-  purchasePrice: z.coerce.number().min(0).optional(),
-  salePrice: z.coerce.number().min(0),
   description: z.string().optional(),
-  supplierId: z.string().optional(),
 });
 
 function parseMotorcycleForm(formData: FormData) {
@@ -54,14 +47,9 @@ function parseMotorcycleForm(formData: FormData) {
     year: String(formData.get("year") ?? ""),
     displacementCc: String(formData.get("displacementCc") ?? ""),
     plate: String(formData.get("plate") ?? "").toUpperCase().trim(),
-    chassisNumber: String(formData.get("chassisNumber") ?? "").toUpperCase().trim(),
-    engineNumber: String(formData.get("engineNumber") ?? "") || undefined,
     color: String(formData.get("color") ?? "") || undefined,
     mileageKm: String(formData.get("mileageKm") ?? "") || undefined,
-    purchasePrice: String(formData.get("purchasePrice") ?? "") || undefined,
-    salePrice: String(formData.get("salePrice") ?? ""),
     description: String(formData.get("description") ?? "") || undefined,
-    supplierId: String(formData.get("supplierId") ?? "") || undefined,
   };
   return MotorcycleSchema.parse(raw);
 }
@@ -151,14 +139,10 @@ export async function deleteMotorcycle(id: string) {
   await requireSession();
   const photos = await prisma.photo.findMany({ where: { motorcycleId: id } });
 
-  await prisma.$transaction([
-    prisma.sale.deleteMany({ where: { motorcycleId: id } }),
-    prisma.motorcycle.delete({ where: { id } }),
-  ]);
+  await prisma.motorcycle.delete({ where: { id } });
 
   await Promise.all(photos.map((p) => deleteMotorcyclePhoto(p.url)));
 
   revalidatePath("/panel/motos");
-  revalidatePath("/panel/ventas");
   revalidatePath("/panel");
 }

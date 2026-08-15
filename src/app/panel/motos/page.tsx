@@ -29,7 +29,6 @@ export default async function MotosPage({
   if (q) {
     where.OR = [
       { plate: { contains: q, mode: "insensitive" } },
-      { chassisNumber: { contains: q, mode: "insensitive" } },
       { brand: { contains: q, mode: "insensitive" } },
       { model: { contains: q, mode: "insensitive" } },
     ];
@@ -57,7 +56,7 @@ export default async function MotosPage({
           type="text"
           name="q"
           defaultValue={q}
-          placeholder="Buscar por placa, chasis, marca o línea..."
+          placeholder="Buscar por placa, marca o línea..."
           className="panel-input max-w-sm"
         />
         <select name="status" defaultValue={status ?? ""} className="panel-select w-auto">
@@ -104,9 +103,7 @@ export default async function MotosPage({
               </p>
               <p className="panel-muted mt-1 text-xs uppercase tracking-[0.14em]">
                 Placa {moto.plate} · {moto.displacementCc} cc
-              </p>
-              <p className="display mt-3 text-xl text-brand-orange">
-                ${Number(moto.salePrice).toLocaleString("es-CO")}
+                {moto.mileageKm != null && ` · ${moto.mileageKm.toLocaleString("es-CO")} km`}
               </p>
             </div>
           </Link>
